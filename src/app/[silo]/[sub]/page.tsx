@@ -2,17 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { CategoryPage } from "@/components/product/category-page";
-import { CATALOG_ROUTES, findRoute, routePath } from "@/lib/catalog-routes";
+import { findRoute, routePath } from "@/lib/catalog-routes";
 
-// Solo existen las URLs de la arquitectura web; el resto da 404.
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return CATALOG_ROUTES.filter((r) => r.segments.length === 2).map((r) => ({
-    silo: r.segments[0],
-    sub: r.segments[1],
-  }));
-}
+// Se renderiza en cada visita (lee el catálogo de Supabase con la sesión).
+// Solo existen las URLs de la arquitectura web: el resto da 404 en la página.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 
 import { Configurator } from "@/components/configurator/configurator";
 import { Badge, Eyebrow } from "@/components/ui/badge";
-import { getCatalog, getProductWithOptions } from "@/lib/db/products";
+import { getProductWithOptions } from "@/lib/db/products";
 import { SITE_URL } from "@/lib/site";
 import { COMMON_SPECS, PRODUCT_SPECS } from "@/lib/product-specs";
 import { getVariantImages } from "@/lib/variant-images";
@@ -15,15 +15,10 @@ interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export async function generateStaticParams() {
-  try {
-    const products = await getCatalog();
-    return products.map((p) => ({ slug: p.slug }));
-  } catch {
-    // Sin base de datos todavía: las rutas se resuelven bajo demanda.
-    return [];
-  }
-}
+// Se renderiza en cada visita: lee los presets de la URL (?rfid=si) y la
+// sesión de Supabase. Como página estática fallaba en producción con
+// DYNAMIC_SERVER_USAGE.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
