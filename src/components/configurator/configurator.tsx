@@ -1,28 +1,50 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
-import { AlertCircle, Check, Loader2, ShoppingBag } from "lucide-react";
+import { Fragment, useMemo, useState, useTransition } from "react";
+import { AlertCircle, Check, Loader2, Plus, ShoppingBag } from "lucide-react";
 
 import { addToCart } from "@/app/actions/cart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PreviewPane } from "./preview-pane";
+import Image from "next/image";
+
+import {
+  mainImageFor,
+  PreviewPane,
+  type PreviewDetail,
+  type PreviewState,
+} from "./preview-pane";
 import { cn, formatPrice, formatPriceUSD } from "@/lib/format";
 import {
   defaultConfiguration,
+  isGroupActive,
   missingRequiredGroups,
   normalizeEngraving,
   previewPrice,
 } from "@/lib/pricing";
 import type { Configuration, OptionGroup, ProductWithOptions } from "@/lib/types";
+import type { VariantImages } from "@/lib/variant-images";
 
-export function Configurator({ product }: { product: ProductWithOptions }) {
+export function Configurator({
+  product,
+  images,
+  preset = {},
+}: {
+  product: ProductWithOptions;
+  images: VariantImages;
+  /** Opciones preelegidas al llegar desde una categoría (p. ej. rfid: "si"). */
+  preset?: Configuration;
+}) {
   const router = useRouter();
   const groups = product.option_groups;
 
   const [config, setConfig] = useState<Configuration>(() =>
-    defaultConfiguration(groups),
+    defaultConfiguration(groups, {
+      textura: product.texture ?? "",
+      ...preset,
+    }),
   );
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState<string | null>(null);
@@ -45,21 +67,21 @@ export function Configurator({ product }: { product: ProductWithOptions }) {
 
     for (const group of groups) {
       const code = config[group.code];
-      if (!code) continue;
+      if (!code || !isGroupActive(group, config)) continue;
 
       if (group.type === "engraving") {
-        if (group.price_delta_cents !== 0 || code) {
-          rows.push({
-            label: group.label,
-            value: normalizeEngraving(code),
-            delta: group.price_delta_cents,
-          });
-        }
+        rows.push({
+          label: group.label,
+          value: normalizeEngraving(code),
+          delta: group.price_delta_cents,
+        });
         continue;
       }
 
       const value = group.values.find((v) => v.code === code);
-      if (value && value.price_delta_cents !== 0) {
+      if (value && group.type === "toggle") {
+        rows.push({ label: "Accesorio", value: value.label, delta: value.price_delta_cents });
+      } else if (value && value.price_delta_cents !== 0) {
         rows.push({
           label: group.label,
           value: value.label,
@@ -72,7 +94,23 @@ export function Configurator({ product }: { product: ProductWithOptions }) {
   }, [groups, config]);
 
   function choose(groupCode: string, value: string) {
-    setConfig((prev) => ({ ...prev, [groupCode]: value }));
+    setConfig((prev) => {
+      const next = { ...prev, [groupCode]: value };
+      // Grupos que dependen de otro (el acabado depende del monograma): al
+      // aparecer se preselecciona la opción incluida; al ocultarse se borra
+      // para que no siga sumando al precio.
+      for (const group of groups) {
+        if (isGroupActive(group, next)) {
+          if (!isGroupActive(group, prev) && !next[group.code]) {
+            const first = group.values.find((v) => v.active);
+            if (first) next[group.code] = first.code;
+          }
+        } else {
+          delete next[group.code];
+        }
+      }
+      return next;
+    });
     setAdded(false);
     if (errorField === groupCode) {
       setError(null);
@@ -112,43 +150,90 @@ export function Configurator({ product }: { product: ProductWithOptions }) {
   }
 
   // Lo que necesita la vista previa
-  const toneGroup = groups.find((g) => g.code === "tono");
-  const tone = toneGroup?.values.find((v) => v.code === config.tono);
-  const textureGroup = groups.find((g) => g.code === "textura");
-  const texture = textureGroup?.values.find((v) => v.code === config.textura);
-  const threadGroup = groups.find((g) => g.code === "hilo");
-  const thread = threadGroup?.values.find((v) => v.code === config.hilo);
+  const pick = (code: string) =>
+    groups
+      .find((g) => g.code === code)
+      ?.values.find((v) => v.code === config[code]);
+  const tone = pick("tono");
+  const toggles = groups.filter((g) => g.type === "toggle");
+
+  // Fotos de detalle: piel, forro, herrajes y luego los accesorios activos.
+  const detailGroups = [
+    "textura",
+    "interior",
+    "herrajes",
+    ...toggles.map((g) => g.code),
+  ];
+  const details: PreviewDetail[] = detailGroups.flatMap((code) => {
+    const group = groups.find((g) => g.code === code);
+    const value = pick(code);
+    if (!group || !value) return [];
+    return [
+      {
+        group: code,
+        groupLabel: group.type === "toggle" ? "Accesorio" : group.label,
+        code: value.code,
+        label: value.label,
+        hex: value.hex,
+      },
+    ];
+  });
+
+  const preview: PreviewState = {
+    toneCode: tone?.code ?? null,
+    toneLabel: tone?.label ?? null,
+    toneHex: tone?.hex ?? null,
+    details,
+    engraving: normalizeEngraving(config.grabado ?? ""),
+    engravingFinishLabel: pick("grabado_acabado")?.label ?? null,
+  };
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-14">
       {/* ------------------------------------------- Lienzo */}
       <div className="lg:sticky lg:top-24 lg:self-start">
-        <PreviewPane
-          product={product}
-          toneHex={tone?.hex ?? null}
-          toneLabel={tone?.label ?? null}
-          textureLabel={texture?.label ?? null}
-          threadHex={thread?.hex ?? null}
-          engraving={normalizeEngraving(config.grabado ?? "")}
-          engravingFinish={
-            (config.grabado_acabado as "golpe-seco" | "foil-oro" | undefined) ??
-            null
-          }
-        />
+        <PreviewPane product={product} images={images} state={preview} />
       </div>
+
+      {/* Barra compacta en móvil: la vista previa sigue a la vista al bajar */}
+      <MobilePreviewBar
+        product={product}
+        images={images}
+        state={preview}
+        price={unitPrice}
+      />
 
       {/* ------------------------------------------- Opciones */}
       <div>
         <div className="flex flex-col gap-10">
-          {groups.map((group) => (
-            <OptionGroupBlock
-              key={group.id}
-              group={group}
-              selected={config[group.code] ?? ""}
-              invalid={errorField === group.code}
-              onChange={(value) => choose(group.code, value)}
-            />
-          ))}
+          {groups.map((group) => {
+            if (!isGroupActive(group, config)) return null;
+
+            if (group.type !== "toggle") {
+              return (
+                <OptionGroupBlock
+                  key={group.id}
+                  group={group}
+                  selected={config[group.code] ?? ""}
+                  invalid={errorField === group.code}
+                  onChange={(value) => choose(group.code, value)}
+                />
+              );
+            }
+
+            // Los accesorios se muestran juntos donde aparece el primero.
+            if (group !== toggles[0]) return <Fragment key={group.id} />;
+            return (
+              <AccessoriesBlock
+                key="accesorios"
+                groups={toggles}
+                config={config}
+                onToggle={(code, on) =>
+                  choose(code, on ? (groups.find((g) => g.code === code)?.values[0]?.code ?? "") : "")
+                }
+              />
+            );
+          })}
         </div>
 
         {/* ------------------------------------------- Resumen */}
@@ -182,8 +267,8 @@ export function Configurator({ product }: { product: ProductWithOptions }) {
 
             {extras.length === 0 && (
               <p className="text-[13px] text-ink-muted">
-                Sin elementos de coste adicional. Grabado y estuche de lino van
-                incluidos.
+                Sin elementos de costo adicional. El grabado y la funda de lino
+                van incluidos.
               </p>
             )}
           </dl>
@@ -234,16 +319,17 @@ export function Configurator({ product }: { product: ProductWithOptions }) {
           </Button>
 
           {added && (
-            <a
+            <Link
               href="/bolsa"
               className="mt-3 block text-center text-[13px] font-semibold text-anil link-underline"
             >
               Ir a la bolsa de compra
-            </a>
+            </Link>
           )}
 
           <p className="mt-4 text-center text-[12px] leading-4 text-ink-muted">
-            Confección artesanal de 3 a 5 días. Envío de cortesía desde $150.
+            Confección artesanal de 3 a 5 días. Envío gratis a todo El Salvador
+            desde $75.
           </p>
         </div>
       </div>
@@ -300,6 +386,119 @@ function OptionGroupBlock({
   );
 }
 
+function AccessoriesBlock({
+  groups,
+  config,
+  onToggle,
+}: {
+  groups: OptionGroup[];
+  config: Configuration;
+  onToggle: (code: string, on: boolean) => void;
+}) {
+  return (
+    <fieldset id="grupo-accesorios" className="scroll-mt-28">
+      <legend className="font-display text-[22px] leading-7 font-semibold text-piedra">
+        Accesorios
+        <span className="ml-2 align-middle text-[11px] font-sans font-semibold uppercase tracking-wider text-ink-muted">
+          Opcional
+        </span>
+      </legend>
+      <p className="mt-1.5 text-[13px] leading-5 text-ink-muted">
+        Funciones extra que se integran en la pieza. Puedes elegir varias.
+      </p>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {groups.map((group) => {
+          const value = group.values[0];
+          if (!value) return null;
+          const isOn = Boolean(config[group.code]);
+          return (
+            <button
+              key={group.id}
+              type="button"
+              role="switch"
+              aria-checked={isOn}
+              onClick={() => onToggle(group.code, !isOn)}
+              className={cn(
+                "flex items-start gap-3 rounded-lg border p-4 text-left transition-all",
+                isOn
+                  ? "border-anil border-[1.5px] bg-anil/[0.04] shadow-[0_0_0_3px_rgb(30_43_79_/_0.07)]"
+                  : "border-outline-variant bg-surface-lowest hover:border-anil/50 hover:-translate-y-px",
+              )}
+            >
+              <span
+                className={cn(
+                  "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-xs border-[1.5px] transition-colors",
+                  isOn ? "border-anil bg-anil text-algodon" : "border-piedra/35",
+                )}
+              >
+                {isOn ? <Check size={13} strokeWidth={3} /> : <Plus size={12} strokeWidth={2.5} className="text-ink-muted" />}
+              </span>
+              <span className="flex flex-1 flex-col">
+                <span className="label-pill text-piedra">{group.label}</span>
+                {group.helper && (
+                  <span className="mt-1.5 text-[12px] leading-4 text-ink-muted">
+                    {group.helper}
+                  </span>
+                )}
+                <span className="mt-3 text-[13px] font-semibold text-cafe">
+                  +{formatPrice(value.price_delta_cents)}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+function MobilePreviewBar({
+  product,
+  images,
+  state,
+  price,
+}: {
+  product: ProductWithOptions;
+  images: VariantImages;
+  state: PreviewState;
+  price: number;
+}) {
+  const main = mainImageFor(product, images, state.toneCode);
+
+  return (
+    <div className="sticky top-16 z-30 -mx-5 -mt-6 border-y border-outline-variant/60 bg-algodon/95 px-5 py-2.5 backdrop-blur-sm md:-mx-8 md:px-8 lg:hidden">
+      <div className="flex items-center gap-3">
+        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-outline-variant/70 bg-surface-container">
+          {main.src && (
+            <Image
+              key={main.src}
+              src={main.src}
+              alt=""
+              fill
+              sizes="56px"
+              className="object-cover"
+            />
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[13px] font-semibold text-piedra">
+            {product.name}
+          </p>
+          <p className="truncate text-[12px] text-ink-muted">
+            {[state.toneLabel, state.details[0]?.label]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+        </div>
+        <p className="shrink-0 font-display text-lg font-semibold text-piedra tabular-nums">
+          {formatPriceUSD(price)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function ColorSwatches({
   group,
   selected,
@@ -322,6 +521,7 @@ function ColorSwatches({
               type="button"
               onClick={() => onChange(value.code)}
               aria-pressed={isActive}
+              aria-label={value.label}
               title={value.label}
               className={cn(
                 "group relative grid h-12 w-12 place-items-center rounded-full border transition-all",

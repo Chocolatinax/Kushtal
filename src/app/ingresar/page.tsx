@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Ingresar al Atelier",
+  title: "Ingresar",
 };
 
 const PERKS = [
-  "Seguí el estado de confección de cada pieza",
-  "Guardá tus configuraciones y direcciones",
-  "Accedé al servicio anual de acondicionamiento",
+  "Sigue el estado de confección de cada pieza",
+  "Guarda tus datos de envío para tu próximo pedido",
+  "Consulta el historial de tus pedidos",
 ];
 
 interface PageProps {
@@ -35,12 +35,12 @@ export default async function LoginPage({ searchParams }: PageProps) {
         <Eyebrow>Acceso al atelier</Eyebrow>
 
         <h1 className="mt-3 font-display text-[32px] leading-10 font-semibold text-piedra md:text-[40px] md:leading-[48px]">
-          Entrá a tu cuaderno de taller
+          Entra a tu cuenta
         </h1>
 
         <p className="mt-3 text-[15px] leading-6 text-ink-muted">
-          Una sola cuenta para seguir tus encargos, guardar configuraciones y
-          recibir el servicio de por vida.
+          Una sola cuenta para seguir tus pedidos y guardar tus datos de
+          envío.
         </p>
 
         {error && (
@@ -48,7 +48,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
             role="alert"
             className="mt-6 rounded-lg bg-danger-container px-4 py-3 text-[13px] text-danger-ink"
           >
-            No se pudo completar el ingreso. Probá de nuevo.
+            No se pudo completar el ingreso. Intenta de nuevo.
           </p>
         )}
 
@@ -82,18 +82,18 @@ export default async function LoginPage({ searchParams }: PageProps) {
         </ul>
 
         <p className="mt-8 text-[12px] leading-4 text-ink-muted">
-          No necesitás cuenta para comprar: podés completar tu pedido como
+          No necesitas cuenta para comprar: puedes completar tu pedido como
           invitado y crearla después.
         </p>
       </div>
 
       <div className="hidden rounded-xl bg-anil p-10 text-algodon lg:block">
         <p className="font-display text-2xl leading-9 font-medium">
-          &ldquo;Rechazamos la producción acelerada. Nuestras pieles absorben la
-          luz, el aceite de tus manos y las marcas del camino.&rdquo;
+          &ldquo;No fabricamos en serie: cada billetera empieza a hacerse cuando
+          terminas de diseñarla.&rdquo;
         </p>
         <p className="mt-6 eyebrow text-algodon/60">
-          Maestro guarnicionero · Taller Kushtal
+          Taller Kushtal
         </p>
       </div>
     </div>

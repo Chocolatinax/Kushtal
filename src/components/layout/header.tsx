@@ -1,13 +1,28 @@
 import Link from "next/link";
 import { Search, ShoppingBag, User } from "lucide-react";
 
+import { childrenOf, routePath, SILOS } from "@/lib/catalog-routes";
 import { getCartCount } from "@/lib/db/cart";
 import { getCurrentUser } from "@/lib/supabase/server";
-import { MobileNav } from "./mobile-nav";
+import { CollectionMenu } from "./collection-menu";
+import { MobileNav, type NavItem } from "./mobile-nav";
 
-const NAV = [
-  { href: "/coleccion", label: "Colección" },
-  { href: "/personalizar", label: "Personalizador" },
+/**
+ * "Colección" abre un panel con las categorías y subcategorías de la
+ * arquitectura web. Sin "Inicio" (el logo ya lleva a la home) ni
+ * "Personalizador" (cada producto abre su configurador).
+ */
+const COLLECTION_GROUPS = SILOS.map((silo) => ({
+  href: routePath(silo),
+  label: silo.label,
+  links: childrenOf(silo).map((sub) => ({
+    href: routePath(sub),
+    label: sub.label,
+  })),
+}));
+
+const NAV: NavItem[] = [
+  { href: "/coleccion", label: "Colección", groups: COLLECTION_GROUPS },
   { href: "/artesania", label: "Artesanía" },
   { href: "/sobre-kushtal", label: "Sobre Kushtal" },
 ];
@@ -20,19 +35,8 @@ export async function Header() {
 
   return (
     <>
-      {/* Barra de anuncio */}
-      <div className="bg-anil text-algodon">
-        <div className="canvas flex h-9 items-center justify-center">
-          <p className="eyebrow text-center text-[10px] sm:text-[11px]">
-            Envío de cortesía en pedidos superiores a $150
-            <span className="mx-2 opacity-50">|</span>
-            Grabado personalizado incluido
-          </p>
-        </div>
-      </div>
-
       <header className="sticky top-0 z-50 border-b border-outline-variant/60 bg-algodon/95 backdrop-blur-sm">
-        <div className="canvas flex h-16 items-center gap-6">
+        <div className="canvas flex h-16 items-center gap-8">
           <MobileNav items={NAV} />
 
           <Link
@@ -42,16 +46,20 @@ export async function Header() {
             KUSHTAL
           </Link>
 
-          <nav className="hidden items-center gap-7 lg:flex">
-            {NAV.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="label-pill text-[11px] text-ink-muted transition-colors hover:text-anil"
-              >
-                {item.label}
-              </Link>
-            ))}
+          <nav className="hidden h-full items-center gap-7 lg:flex">
+            {NAV.map((item) =>
+              item.groups ? (
+                <CollectionMenu key={item.href} item={item} />
+              ) : (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="label-pill text-[11px] text-ink-muted transition-colors hover:text-anil"
+                >
+                  {item.label}
+                </Link>
+              ),
+            )}
           </nav>
 
           <div className="ml-auto flex items-center gap-4">
@@ -59,13 +67,13 @@ export async function Header() {
               USD $
             </span>
 
-            <button
-              type="button"
-              aria-label="Buscar"
+            <Link
+              href="/coleccion#buscar"
+              aria-label="Buscar en la colección"
               className="rounded-sm p-1.5 text-ink-muted transition-colors hover:text-anil"
             >
               <Search size={19} strokeWidth={1.6} />
-            </button>
+            </Link>
 
             <Link
               href="/bolsa"

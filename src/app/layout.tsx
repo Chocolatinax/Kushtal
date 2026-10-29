@@ -3,6 +3,7 @@ import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -21,22 +22,26 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Kushtal — Atelier de Marroquinería",
+    default: "Kushtal · Billeteras personalizadas en El Salvador",
     template: "%s · Kushtal",
   },
   description:
-    "Billeteras y tarjeteros de piel curtida al vegetal, personalizados pieza por pieza en nuestro taller. Grabado incluido y garantía de por vida.",
+    "Billeteras y tarjeteros de cuero personalizables desde $50. Diseña la tuya con nuestro configurador y mírala en tiempo real antes de comprar.",
   openGraph: {
     type: "website",
-    locale: "es_ES",
+    locale: "es_SV",
     siteName: "Kushtal",
-    title: "Kushtal — Atelier de Marroquinería",
+    title: "Kushtal · Billeteras personalizadas en El Salvador",
     description:
-      "El arte del cuero hecho a tu medida. Configurá tu pieza: tono, textura, pespunte y monograma.",
+      "Diseña tu billetera: color, tipo de piel, forro, accesorios y monograma. Desde $50.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kushtal · Billeteras personalizadas en El Salvador",
+    description:
+      "Diseña tu billetera: color, tipo de piel, forro, accesorios y monograma. Desde $50.",
   },
 };
 

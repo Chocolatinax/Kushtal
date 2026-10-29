@@ -50,6 +50,8 @@ export interface Product {
   hero_image: string | null;
   images: string[];
   tones: string[];
+  /** Intención de búsqueda: hombre, mujer, slim, viaje… */
+  tags: string[];
   texture: string | null;
   featured: boolean;
   active: boolean;
@@ -113,11 +115,33 @@ export interface ShippingAddress {
   last_name: string;
   email: string;
   address: string;
+  /** Municipio o distrito. */
   city: string;
+  /** Departamento de El Salvador. Opcional en pedidos anteriores. */
+  department?: string;
+  /** Opcional: en El Salvador casi no se usa. */
   postal_code: string;
   phone: string;
   country: string;
 }
+
+/** Los 14 departamentos de El Salvador, para el formulario de envío. */
+export const SV_DEPARTMENTS = [
+  "Ahuachapán",
+  "Cabañas",
+  "Chalatenango",
+  "Cuscatlán",
+  "La Libertad",
+  "La Paz",
+  "La Unión",
+  "Morazán",
+  "San Miguel",
+  "San Salvador",
+  "San Vicente",
+  "Santa Ana",
+  "Sonsonate",
+  "Usulután",
+] as const;
 
 export interface OrderItem {
   id: string;
@@ -158,19 +182,19 @@ export interface ShippingOption {
 export const SHIPPING_OPTIONS: ShippingOption[] = [
   {
     code: "standard",
-    label: "Envío Artesanal Estándar",
-    description: "3–5 días de confección dedicada + 2–3 días de tránsito seguro.",
-    price_cents: 0,
-    badge: "Sin coste",
+    label: "Envío estándar a todo El Salvador",
+    description: "3–5 días de confección + 1–3 días hábiles de entrega a domicilio.",
+    price_cents: 400,
+    badge: "Gratis desde $75",
   },
   {
     code: "express",
-    label: "Prioritario Courier Express",
-    description: "Prioridad en banco de corte + entrega courier de 24/48 horas.",
-    price_cents: 1800,
-    badge: "Urgente",
+    label: "Envío express",
+    description: "Tu pieza pasa primero al taller y se entrega por courier en 24–48 horas.",
+    price_cents: 900,
+    badge: "Más rápido",
   },
 ];
 
-/** Envío de cortesía en pedidos superiores a $150 (está en la barra superior). */
-export const FREE_SHIPPING_THRESHOLD_CENTS = 15000;
+/** Envío estándar gratis desde $75 (está en la barra superior). */
+export const FREE_SHIPPING_THRESHOLD_CENTS = 7500;

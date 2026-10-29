@@ -28,12 +28,12 @@ const PROMISES = [
   {
     icon: Leaf,
     title: "Embalaje Consciente y Cuidado",
-    body: "Cajas rígidas de fibra reciclada, funda de algodón orgánico y sello de cera natural.",
+    body: "Funda de lino incluida, o caja de regalo rígida si la eliges en el configurador.",
   },
   {
     icon: LifeBuoy,
     title: "Atención Personalizada Posventa",
-    body: "Garantía vitalicia en costuras a dos agujas y servicio de acondicionamiento de piel.",
+    body: "1 año de garantía en costuras y herrajes, y atención por WhatsApp o correo.",
   },
 ];
 
@@ -64,6 +64,7 @@ export default async function CheckoutPage() {
       last_name: address?.last_name ?? rest.join(" "),
       address: address?.address ?? "",
       city: address?.city ?? "",
+      department: address?.department ?? "San Salvador",
       postal_code: address?.postal_code ?? "",
       phone: address?.phone ?? profile?.phone ?? "",
     };
@@ -98,14 +99,10 @@ export default async function CheckoutPage() {
 
         <aside className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-xl border border-outline-variant/70 bg-surface-lowest p-6">
-            <header className="flex items-center justify-between gap-3">
+            <header>
               <h2 className="font-display text-[26px] font-semibold text-piedra">
-                Resumen del Pedido
+                Resumen del pedido
               </h2>
-              <Badge tone="craft">
-                {cart.item_count}{" "}
-                {cart.item_count === 1 ? "artículo" : "artículos"}
-              </Badge>
             </header>
 
             <ul className="mt-6 flex flex-col divide-y divide-outline-variant/60">
@@ -167,28 +164,28 @@ export default async function CheckoutPage() {
 
             <dl className="mt-5 flex flex-col gap-2.5 border-t border-outline-variant/60 pt-5 text-[14px]">
               <div className="flex justify-between">
-                <dt className="text-ink-muted">Subtotal marroquinería</dt>
+                <dt className="text-ink-muted">Subtotal</dt>
                 <dd className="font-medium text-piedra tabular-nums">
                   {formatPriceUSD(cart.subtotal_cents)}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-ink-muted">Grabados artesanales</dt>
-                <dd className="text-torogoz-ink">Incluidos</dd>
+                <dt className="text-ink-muted">Grabado de monograma</dt>
+                <dd className="text-torogoz-ink">Incluido</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-ink-muted">Costes de envío</dt>
-                <dd className="text-ink-muted">Según modalidad</dd>
+                <dt className="text-ink-muted">Envío</dt>
+                <dd className="text-ink-muted">Según el tipo de envío</dd>
               </div>
             </dl>
 
             <div className="mt-5 flex items-end justify-between gap-4 border-t border-outline-variant/60 pt-5">
               <div>
                 <p className="font-display text-xl font-semibold text-piedra">
-                  Total a abonar
+                  Subtotal del pedido
                 </p>
                 <p className="mt-0.5 text-[12px] text-ink-muted">
-                  Impuestos incluidos con factura formal
+                  Precios en dólares, IVA incluido. El envío se suma al confirmar.
                 </p>
               </div>
               <p className="font-display text-[26px] leading-8 font-semibold text-piedra tabular-nums">
@@ -197,8 +194,8 @@ export default async function CheckoutPage() {
             </div>
 
             <p className="mt-5 text-center text-[12px] leading-4 text-ink-muted">
-              Al confirmar tu pedido, nuestro maestro guarnicionero iniciará la
-              preparación de tus cueros.
+              Al confirmar tu pedido empezamos a cortar y coser tu pieza a
+              mano.
             </p>
           </div>
 

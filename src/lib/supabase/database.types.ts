@@ -59,6 +59,7 @@ export interface Database {
           hero_image: string | null;
           images: string[];
           tones: string[];
+          tags: string[];
           texture: string | null;
           featured: boolean;
           active: boolean;
@@ -78,6 +79,7 @@ export interface Database {
           hero_image?: string | null;
           images?: string[];
           tones?: string[];
+          tags?: string[];
           texture?: string | null;
           featured?: boolean;
           active?: boolean;

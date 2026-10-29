@@ -10,8 +10,8 @@ export default function NotFound() {
           Esta pieza no está en el taller
         </h1>
         <p className="mt-4 text-[15px] leading-6 text-ink-muted">
-          La página que buscás no existe o la silueta salió de catálogo. Volvé a
-          la colección y elegí tu próxima pieza.
+          La página que buscas no existe o el modelo salió del catálogo. Vuelve a
+          la colección y elige tu próxima pieza.
         </p>
         <ButtonLink href="/coleccion" size="lg" className="mt-7">
           Ver la colección

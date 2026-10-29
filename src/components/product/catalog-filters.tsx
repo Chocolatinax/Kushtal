@@ -1,32 +1,32 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useTransition } from "react";
-import { SlidersHorizontal } from "lucide-react";
+import { useCallback, useState, useTransition } from "react";
+import { Search, X } from "lucide-react";
 
 import { cn } from "@/lib/format";
 
-const TONES = [
-  { code: "all", label: "Todos", hex: null },
-  { code: "indigo", label: "Azul Ceniza Índigo", hex: "#1E2B4F" },
-  { code: "chocolate", label: "Marrón Chocolate", hex: "#3B2318" },
-  { code: "azabache", label: "Negro Azabache", hex: "#17161A" },
-  { code: "caramelo", label: "Caramelo Tostado", hex: "#A9672F" },
-  { code: "salvia", label: "Verde Salvia", hex: "#77876B" },
-];
-
+/** Mismos codes que el grupo "textura" del configurador. */
 const TEXTURES = [
-  { code: "all", label: "Todas las texturas" },
-  { code: "lisa", label: "Vacuna lisa" },
-  { code: "grano", label: "Grano natural" },
+  { code: "all", label: "Todas las pieles" },
+  { code: "vacuna-lisa", label: "Cuero vacuno liso" },
+  { code: "grano-natural", label: "Piel de grano entero" },
+  { code: "curtido-vegetal", label: "Curtido vegetal" },
+  { code: "crazy-horse", label: "Cuero Crazy Horse" },
 ];
 
 const SORTS = [
-  { code: "popular", label: "Más populares" },
-  { code: "price-asc", label: "Precio: menor a mayor" },
-  { code: "price-desc", label: "Precio: mayor a menor" },
+  { code: "popular", label: "Destacados" },
+  { code: "name", label: "Nombre (A–Z)" },
   { code: "new", label: "Novedades primero" },
 ];
+
+const DEFAULTS: Record<string, string> = {
+  categoria: "todas",
+  textura: "all",
+  orden: "popular",
+  q: "",
+};
 
 export function CatalogFilters({
   categories,
@@ -42,15 +42,17 @@ export function CatalogFilters({
 
   const current = {
     categoria: params.get("categoria") ?? "todas",
-    tono: params.get("tono") ?? "all",
     textura: params.get("textura") ?? "all",
     orden: params.get("orden") ?? "popular",
+    q: params.get("q") ?? "",
   };
+
+  const [query, setQuery] = useState(current.q);
 
   const setParam = useCallback(
     (key: string, value: string) => {
       const next = new URLSearchParams(params.toString());
-      if (value === "todas" || value === "all" || value === "popular") {
+      if (value === DEFAULTS[key]) {
         next.delete(key);
       } else {
         next.set(key, value);
@@ -63,6 +65,9 @@ export function CatalogFilters({
     [params, pathname, router],
   );
 
+  const hasFilters =
+    current.textura !== "all" || current.q !== "";
+
   return (
     <div
       className={cn(
@@ -70,11 +75,12 @@ export function CatalogFilters({
         pending && "opacity-60",
       )}
     >
-      {/* Categorías */}
+      {/* Categorías + buscador */}
       <div className="flex flex-wrap items-center gap-2 border-b border-outline-variant/60 p-4">
         <button
           type="button"
           onClick={() => setParam("categoria", "todas")}
+          aria-pressed={current.categoria === "todas"}
           className={chip(current.categoria === "todas")}
         >
           Todas ({total})
@@ -85,60 +91,44 @@ export function CatalogFilters({
             key={cat.code}
             type="button"
             onClick={() => setParam("categoria", cat.code)}
+            aria-pressed={current.categoria === cat.code}
+            disabled={cat.count === 0 && current.categoria !== cat.code}
             className={chip(current.categoria === cat.code)}
           >
             {cat.label} ({cat.count})
           </button>
         ))}
 
-        <span className="ml-auto hidden items-center gap-1.5 eyebrow text-ink-muted sm:flex">
-          <SlidersHorizontal size={13} strokeWidth={1.8} />
-          Filtrado preciso
-        </span>
+        <form
+          role="search"
+          className="relative w-full sm:ml-auto sm:w-64"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setParam("q", query.trim());
+          }}
+        >
+          <Search
+            size={15}
+            strokeWidth={1.8}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted"
+          />
+          <input
+            id="buscar"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onBlur={() => query.trim() !== current.q && setParam("q", query.trim())}
+            placeholder="Buscar billeteras o tarjeteros"
+            aria-label="Buscar en la colección"
+            className="w-full scroll-mt-28 rounded-full border border-outline-variant bg-surface-container py-2 pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-muted/70 focus:border-anil focus:outline-none"
+          />
+        </form>
       </div>
 
-      {/* Tono + textura + orden */}
+      {/* Piel + orden. Sin filtro de tono: cada modelo tiene sus propios colores. */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-4 p-4">
-        <div className="flex items-center gap-2.5">
-          <span className="eyebrow text-ink-muted">Tono</span>
-          <div className="flex items-center gap-1.5">
-            {TONES.map((tone) =>
-              tone.hex === null ? (
-                <button
-                  key={tone.code}
-                  type="button"
-                  onClick={() => setParam("tono", tone.code)}
-                  className={cn(
-                    "rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider transition-colors",
-                    current.tono === tone.code
-                      ? "bg-anil text-algodon"
-                      : "text-ink-muted hover:text-anil",
-                  )}
-                >
-                  All
-                </button>
-              ) : (
-                <button
-                  key={tone.code}
-                  type="button"
-                  aria-label={tone.label}
-                  title={tone.label}
-                  onClick={() => setParam("tono", tone.code)}
-                  style={{ backgroundColor: tone.hex }}
-                  className={cn(
-                    "h-5 w-5 rounded-full border transition-all",
-                    current.tono === tone.code
-                      ? "border-anil ring-2 ring-anil/25 ring-offset-1 ring-offset-surface-lowest"
-                      : "border-piedra/15 hover:scale-110",
-                  )}
-                />
-              ),
-            )}
-          </div>
-        </div>
-
         <label className="flex items-center gap-2">
-          <span className="eyebrow text-ink-muted">Textura</span>
+          <span className="eyebrow text-ink-muted">Piel</span>
           <select
             value={current.textura}
             onChange={(e) => setParam("textura", e.target.value)}
@@ -151,6 +141,25 @@ export function CatalogFilters({
             ))}
           </select>
         </label>
+
+        {hasFilters && (
+          <button
+            type="button"
+            onClick={() =>
+              startTransition(() => {
+                const next = new URLSearchParams(params.toString());
+                next.delete("textura");
+                next.delete("q");
+                const qs = next.toString();
+                router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+              })
+            }
+            className="inline-flex items-center gap-1 text-[12px] font-semibold text-cafe hover:text-anil"
+          >
+            <X size={13} strokeWidth={2} />
+            Limpiar filtros
+          </button>
+        )}
 
         <label className="flex items-center gap-2 sm:ml-auto">
           <span className="eyebrow text-ink-muted">Ordenar por</span>
@@ -173,7 +182,7 @@ export function CatalogFilters({
 
 function chip(active: boolean) {
   return cn(
-    "rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors",
+    "rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40",
     active
       ? "border-anil bg-anil text-algodon"
       : "border-outline-variant bg-transparent text-ink-muted hover:border-anil hover:text-anil",

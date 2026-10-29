@@ -47,6 +47,26 @@ interface PriceResult {
 }
 
 /**
+ * Grupos que solo existen si otro tiene valor: el acabado del grabado no
+ * tiene sentido sin monograma. Si el grupo del que depende está vacío, se
+ * oculta en el configurador y no se cobra aunque llegue en el payload.
+ */
+export const GROUP_DEPENDS_ON: Record<string, string> = {
+  grabado_acabado: "grabado",
+};
+
+/** ¿Este grupo aplica con la configuración actual? */
+export function isGroupActive(
+  group: Pick<OptionGroup, "code">,
+  config: Configuration,
+): boolean {
+  const parent = GROUP_DEPENDS_ON[group.code];
+  if (!parent) return true;
+  const raw = config[parent];
+  return typeof raw === "string" && normalizeEngraving(raw).length > 0;
+}
+
+/**
  * Valida la configuración y devuelve el precio unitario + el desglose legible.
  * Lanza ConfigurationError si falta un grupo obligatorio o si un código no
  * existe para ese producto.
@@ -59,6 +79,8 @@ export function priceConfiguration(
   const details: ConfigLineDetail[] = [];
 
   for (const group of product.option_groups) {
+    if (!isGroupActive(group, config)) continue;
+
     const raw = config[group.code];
     const provided = typeof raw === "string" && raw.trim().length > 0;
 
@@ -81,7 +103,7 @@ export function priceConfiguration(
         );
       }
       const text = normalizeEngraving(parsed.data);
-      const max = group.max_length ?? 24;
+      const max = group.max_length ?? 12;
       if (text.length > max) {
         throw new ConfigurationError(
           `El grabado admite máximo ${max} caracteres`,
@@ -146,6 +168,8 @@ export function previewPrice(
   let total = basePriceCents;
 
   for (const group of groups) {
+    if (!isGroupActive(group, config)) continue;
+
     const raw = config[group.code];
     if (typeof raw !== "string" || raw.trim().length === 0) continue;
 
@@ -167,19 +191,34 @@ export function missingRequiredGroups(
   config: Configuration,
 ): OptionGroup[] {
   return groups.filter((g) => {
-    if (!g.required) return false;
+    if (!g.required || !isGroupActive(g, config)) return false;
     const raw = config[g.code];
     return typeof raw !== "string" || raw.trim().length === 0;
   });
 }
 
-/** Preselecciona la primera opción de cada grupo obligatorio. */
-export function defaultConfiguration(groups: OptionGroup[]): Configuration {
+/**
+ * Preselecciona la primera opción de cada grupo obligatorio, o la que venga en
+ * `preferred` si existe (p. ej. la piel con la que se fotografió el modelo, o
+ * `rfid: "si"` al entrar desde /billeteras-hombre/rfid/). En los grupos
+ * opcionales solo se aplica `preferred`, y solo si el valor existe.
+ */
+export function defaultConfiguration(
+  groups: OptionGroup[],
+  preferred: Configuration = {},
+): Configuration {
   const config: Configuration = {};
   for (const group of groups) {
     if (group.type === "engraving") continue;
-    const first = group.values.find((v) => v.active);
-    if (first && group.required) config[group.code] = first.code;
+    const wanted = group.values.find(
+      (v) => v.active && v.code === preferred[group.code],
+    );
+    if (!group.required) {
+      if (wanted) config[group.code] = wanted.code;
+      continue;
+    }
+    const first = wanted ?? group.values.find((v) => v.active);
+    if (first) config[group.code] = first.code;
   }
   return config;
 }
@@ -191,16 +230,17 @@ export function resolveShipping(code: string) {
 }
 
 /**
- * Envío de cortesía sobre el umbral. El express siempre se cobra: la cortesía
- * cubre el estándar, no la prioridad en el banco de corte.
+ * Envío estándar gratis sobre el umbral. El express siempre se cobra: la
+ * cortesía cubre el estándar, no la prioridad en el taller.
  */
 export function shippingCostCents(
   subtotalCents: number,
   shippingCode: string,
 ): number {
   const option = resolveShipping(shippingCode);
-  if (option.code === "standard") return 0;
-  if (subtotalCents >= FREE_SHIPPING_THRESHOLD_CENTS) return option.price_cents;
+  if (option.code === "standard" && qualifiesForFreeShipping(subtotalCents)) {
+    return 0;
+  }
   return option.price_cents;
 }
 

@@ -12,14 +12,14 @@
   --color-anil-container: #2a3a68;
 
   --color-piedra: #2b2826;
-  --color-piedra-soft: #57524e;
+  --color-piedra-soft: #5a5551;
 
   --color-cafe: #8a5a3b;
   --color-cafe-container: #f5e4d8;
 
-  --color-torogoz: #2f8f83;
-  --color-torogoz-container: #e0f2ef;
-  --color-torogoz-ink: #1d5d55;
+  --color-torogoz: #22655e; /* "Stormy Teal" de la paleta de Stitch */
+  --color-torogoz-container: #dcebe8;
+  --color-torogoz-ink: #174640;
 
   --color-ceniza: #e9e1d6;
   --color-algodon: #faf7f2;
@@ -31,10 +31,10 @@
   --color-surface-highest: #ddd3c6;
 
   --color-ink: #2b2826;
-  --color-ink-muted: #57524e;
+  --color-ink-muted: #5a5551;
 
-  --color-outline: #8d857e;
-  --color-outline-variant: #d6ccc0;
+  --color-outline: #8d857d;
+  --color-outline-variant: #d6cdc1;
 
   --color-danger: #ba1a1a;
   --color-danger-container: #ffdad6;
@@ -188,5 +188,15 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Cambio de foto en el configurador */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

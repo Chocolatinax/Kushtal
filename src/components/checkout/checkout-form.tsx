@@ -14,15 +14,41 @@ import {
 
 import { placeOrder, type CheckoutState } from "@/app/actions/checkout";
 import { Button } from "@/components/ui/button";
-import { Field, Input } from "@/components/ui/field";
+import { Field, Input, Select } from "@/components/ui/field";
 import { cn, formatPrice } from "@/lib/format";
-import { SHIPPING_OPTIONS } from "@/lib/types";
+import { shippingCostCents } from "@/lib/pricing";
+import { SHIPPING_OPTIONS, SV_DEPARTMENTS } from "@/lib/types";
 
+/**
+ * Las pestañas son las del diseño de Stitch. Tarjeta, Apple Pay y Google Pay
+ * se cobran en la pasarela de Stripe (que muestra las billeteras digitales
+ * según el dispositivo); PayPal y transferencia se coordinan por correo.
+ */
 const PAYMENT_TABS = [
-  { code: "card", label: "Tarjeta", icon: CreditCard },
-  { code: "apple", label: "Apple Pay", icon: Smartphone },
-  { code: "paypal", label: "PayPal", icon: Banknote },
-  { code: "transfer", label: "Transferencia", icon: Landmark },
+  {
+    code: "card",
+    label: "Tarjeta",
+    icon: CreditCard,
+    note: "Visa, Mastercard o American Express, en la pasarela cifrada de Stripe.",
+  },
+  {
+    code: "wallet",
+    label: "Apple Pay / G Pay",
+    icon: Smartphone,
+    note: "Si tu dispositivo lo admite, Stripe te mostrará Apple Pay o Google Pay al pagar.",
+  },
+  {
+    code: "paypal",
+    label: "PayPal",
+    icon: Banknote,
+    note: "Registramos tu pedido y te enviamos el enlace de PayPal a tu correo en menos de 24 horas.",
+  },
+  {
+    code: "transfer",
+    label: "Transferencia",
+    icon: Landmark,
+    note: "Te enviamos los datos de nuestra cuenta bancaria en El Salvador. Tu pieza entra al taller cuando confirmamos el pago.",
+  },
 ];
 
 export function CheckoutForm({
@@ -38,13 +64,16 @@ export function CheckoutForm({
     placeOrder,
     {},
   );
+  // Tras un error, la action devuelve lo enviado para no vaciar los campos.
+  const values = { ...defaults, ...state.values };
   const [shipping, setShipping] = useState("standard");
   const [payment, setPayment] = useState("card");
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
       <input type="hidden" name="shipping_method" value={shipping} />
-      <input type="hidden" name="country" value="ES" />
+      <input type="hidden" name="country" value="SV" />
+      <input type="hidden" name="payment_method" value={payment} />
 
       {state.error && (
         <p
@@ -62,16 +91,16 @@ export function CheckoutForm({
           <div className="flex items-center gap-3">
             <StepDot>1</StepDot>
             <h2 className="font-display text-[26px] font-semibold text-piedra">
-              Contacto y Envío
+              Contacto y envío
             </h2>
           </div>
-          <p className="eyebrow text-cafe">Taller · Destino</p>
+          <p className="eyebrow text-cafe">Entregas en El Salvador</p>
         </header>
 
         <div className="mt-6 flex flex-col gap-4">
           <Field
-            label="Correo electrónico para seguimiento artesanal"
-            hint="Recibirás fotografías del proceso de troquelado y grabado de tus piezas."
+            label="Correo electrónico"
+            hint="Te enviaremos la confirmación y el seguimiento de tu pedido."
             error={state.field === "email" ? state.error : undefined}
           >
             <Input
@@ -79,8 +108,8 @@ export function CheckoutForm({
               type="email"
               required
               autoComplete="email"
-              defaultValue={defaults.email}
-              placeholder="ejemplo@kushtal.com"
+              defaultValue={values.email}
+              placeholder="tucorreo@gmail.com"
             />
           </Field>
 
@@ -93,8 +122,8 @@ export function CheckoutForm({
                 name="first_name"
                 required
                 autoComplete="given-name"
-                defaultValue={defaults.first_name}
-                placeholder="Mateo"
+                defaultValue={values.first_name}
+                placeholder="Andrea"
               />
             </Field>
             <Field
@@ -105,8 +134,8 @@ export function CheckoutForm({
                 name="last_name"
                 required
                 autoComplete="family-name"
-                defaultValue={defaults.last_name}
-                placeholder="Valenzuela Ruiz"
+                defaultValue={values.last_name}
+                placeholder="Martínez López"
               />
             </Field>
           </div>
@@ -119,46 +148,70 @@ export function CheckoutForm({
               name="address"
               required
               autoComplete="street-address"
-              defaultValue={defaults.address}
-              placeholder="Calle de los Artesanos 14, Piso 3 Izq."
+              defaultValue={values.address}
+              placeholder="Col. Escalón, Calle El Mirador #24, casa 5"
             />
           </Field>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <Field
-              label="Ciudad"
+              label="Departamento"
+              error={state.field === "department" ? state.error : undefined}
+            >
+              <Select
+                // El reset del formulario no respeta el nuevo defaultValue de
+                // un <select>: la key lo vuelve a montar con lo enviado.
+                key={values.department}
+                name="department"
+                required
+                autoComplete="address-level1"
+                defaultValue={values.department ?? "San Salvador"}
+              >
+                {SV_DEPARTMENTS.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Field
+              label="Municipio"
               error={state.field === "city" ? state.error : undefined}
             >
               <Input
                 name="city"
                 required
                 autoComplete="address-level2"
-                defaultValue={defaults.city}
-                placeholder="Madrid"
+                defaultValue={values.city}
+                placeholder="San Salvador Centro"
               />
             </Field>
-            <Field
-              label="Código postal"
-              error={state.field === "postal_code" ? state.error : undefined}
-            >
-              <Input
-                name="postal_code"
-                required
-                autoComplete="postal-code"
-                defaultValue={defaults.postal_code}
-                placeholder="28001"
-              />
-            </Field>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
             <Field
               label="Teléfono"
+              hint="Para coordinar la entrega."
               error={state.field === "phone" ? state.error : undefined}
             >
               <Input
                 name="phone"
+                type="tel"
                 required
                 autoComplete="tel"
-                defaultValue={defaults.phone}
-                placeholder="+34 600 000 000"
+                defaultValue={values.phone}
+                placeholder="+503 7123-4567"
+              />
+            </Field>
+            <Field
+              label="Código postal (opcional)"
+              error={state.field === "postal_code" ? state.error : undefined}
+            >
+              <Input
+                name="postal_code"
+                autoComplete="postal-code"
+                defaultValue={values.postal_code}
+                placeholder="CP 1101"
               />
             </Field>
           </div>
@@ -171,7 +224,7 @@ export function CheckoutForm({
               defaultChecked
               className="h-4 w-4 cursor-pointer rounded-xs border-[1.5px] border-piedra/35 accent-torogoz"
             />
-            Guardar esta información para mis futuros encargos en el atelier.
+            Guardar estos datos para mis próximos pedidos.
           </label>
         </div>
       </section>
@@ -182,7 +235,7 @@ export function CheckoutForm({
           <div className="flex items-center gap-3">
             <StepDot>2</StepDot>
             <h2 className="font-display text-[26px] font-semibold text-piedra">
-              Modalidad de Envío
+              Tipo de envío
             </h2>
           </div>
           <p className="eyebrow text-cafe">Logística cuidada</p>
@@ -228,9 +281,9 @@ export function CheckoutForm({
                 </span>
 
                 <span className="shrink-0 font-display text-[15px] font-semibold text-piedra">
-                  {option.price_cents === 0
+                  {shippingCostCents(subtotalCents, option.code) === 0
                     ? "Gratis"
-                    : formatPrice(option.price_cents)}
+                    : formatPrice(shippingCostCents(subtotalCents, option.code))}
                 </span>
               </button>
             );
@@ -243,7 +296,7 @@ export function CheckoutForm({
         <div className="flex items-center gap-3">
           <StepDot>3</StepDot>
           <h2 className="font-display text-[26px] font-semibold text-piedra">
-            Método de Pago
+            Método de pago
           </h2>
         </div>
 
@@ -270,7 +323,11 @@ export function CheckoutForm({
           })}
         </div>
 
-        <div className="mt-6 rounded-lg bg-surface-container p-5">
+        <p className="mt-4 text-[13px] leading-5 text-ink-muted">
+          {PAYMENT_TABS.find((t) => t.code === payment)?.note}
+        </p>
+
+        <div className="mt-4 rounded-lg bg-surface-container p-5">
           {stripeEnabled ? (
             <>
               <p className="flex items-center gap-2 font-display text-[17px] font-semibold text-piedra">
@@ -295,7 +352,7 @@ export function CheckoutForm({
               <p className="mt-2 text-[13px] leading-5 text-ink-muted">
                 Todavía no hay claves de Stripe configuradas. El pedido se
                 registrará igual y verás la confirmación completa, pero sin
-                cobro real. Agregá{" "}
+                cobro real. Agrega{" "}
                 <code className="rounded bg-surface-high px-1.5 py-0.5 text-[11px]">
                   STRIPE_SECRET_KEY
                 </code>{" "}
@@ -319,8 +376,7 @@ function SubmitButton({
   shipping: string;
 }) {
   const { pending } = useFormStatus();
-  const option = SHIPPING_OPTIONS.find((o) => o.code === shipping);
-  const total = subtotalCents + (option?.price_cents ?? 0);
+  const total = subtotalCents + shippingCostCents(subtotalCents, shipping);
 
   return (
     <Button type="submit" size="lg" disabled={pending} className="w-full">

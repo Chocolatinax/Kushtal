@@ -21,17 +21,17 @@ const TIMELINE = [
   {
     icon: Check,
     title: "Encargo recibido",
-    body: "Tu configuración quedó registrada y el maestro guarnicionero la revisó.",
+    body: "Tu configuración quedó registrada y la revisamos antes de cortar.",
   },
   {
     icon: Scissors,
     title: "Corte y grabado",
-    body: "Se trocela la piel elegida y se estampa tu monograma en caliente.",
+    body: "Cortamos la piel que elegiste y grabamos tu monograma en caliente.",
   },
   {
     icon: Package,
     title: "Costura y embalaje",
-    body: "Puntada a dos agujas, bruñido de cantos y estuche con sello de cera.",
+    body: "Costura a dos agujas, acabado de cantos y el empaque que elegiste.",
   },
   {
     icon: Truck,
@@ -73,8 +73,8 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
 
         <p className="mt-4 text-[15px] leading-6 text-ink-muted">
           {status.note} Te enviamos la confirmación a{" "}
-          <strong className="text-piedra">{order.email}</strong> y recibirás
-          fotografías del proceso de troquelado y grabado.
+          <strong className="text-piedra">{order.email}</strong> y te
+          avisaremos cuando tu pieza salga del taller.
         </p>
 
         <div className="mt-7 inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-lg border border-outline-variant/70 bg-surface-lowest px-6 py-4">
@@ -230,7 +230,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
 
             <div className="mt-4 flex items-end justify-between gap-4 border-t border-outline-variant/60 pt-4">
               <p className="font-display text-lg font-semibold text-piedra">
-                Total abonado
+                Total del pedido
               </p>
               <p className="font-display text-[24px] leading-7 font-semibold text-piedra tabular-nums">
                 {formatPriceUSD(order.total_cents)}
@@ -250,7 +250,8 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
               </strong>
               {address.address}
               <br />
-              {address.postal_code} {address.city}
+              {[address.city, address.department].filter(Boolean).join(", ")}
+              {address.postal_code && ` · CP ${address.postal_code}`}
               <br />
               {address.phone}
             </address>

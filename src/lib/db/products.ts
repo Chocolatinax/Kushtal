@@ -9,13 +9,32 @@ import type { OptionGroup, Product, ProductWithOptions } from "@/lib/types";
  * por concatenación pierde la inferencia y todo cae a `any`.
  */
 
-export type CatalogSort = "popular" | "price-asc" | "price-desc" | "new";
+export type CatalogSort = "popular" | "name" | "new";
 
 export interface CatalogFilters {
   category?: string;
-  tone?: string;
+  /** Varias categorías a la vez (p. ej. una página de la arquitectura). */
+  categories?: string[];
+  /** El producto debe tener todas estas etiquetas (hombre, mujer, slim…). */
+  tags?: string[];
   texture?: string;
+  /** Texto libre del buscador: nombre, subtítulo o descripción. */
+  q?: string;
   sort?: CatalogSort;
+}
+
+/** Orden fijo de las categorías en el filtro, con su nombre visible. */
+export const CATEGORY_LABELS: Record<string, string> = {
+  bifold: "Bifold clásicas",
+  tarjetero: "Tarjeteros",
+  larga: "Billeteras largas",
+  cremallera: "Con cremallera",
+};
+
+/** Quita lo que rompería el filtro `or` de PostgREST. */
+function searchTerm(q: string | undefined): string | null {
+  const clean = (q ?? "").replace(/[,()*%\\]/g, " ").trim().slice(0, 60);
+  return clean.length >= 2 ? clean : null;
 }
 
 /** Todo el catálogo activo, con filtros opcionales. */
@@ -27,26 +46,34 @@ export async function getCatalog(
   let query = supabase
     .from("products")
     .select(
-      "id, slug, name, tagline, description, category, base_price_cents, badge, capacity_label, leather_label, hero_image, images, tones, texture, featured, active, created_at",
+      "id, slug, name, tagline, description, category, base_price_cents, badge, capacity_label, leather_label, hero_image, images, tones, tags, texture, featured, active, created_at",
     )
     .eq("active", true);
 
   if (filters.category && filters.category !== "todas") {
     query = query.eq("category", filters.category);
   }
-  if (filters.tone && filters.tone !== "all") {
-    query = query.contains("tones", [filters.tone]);
+  if (filters.categories && filters.categories.length > 0) {
+    query = query.in("category", filters.categories);
+  }
+  if (filters.tags && filters.tags.length > 0) {
+    query = query.contains("tags", filters.tags);
   }
   if (filters.texture && filters.texture !== "all") {
     query = query.eq("texture", filters.texture);
   }
+  const term = searchTerm(filters.q);
+  if (term) {
+    query = query.or(
+      `name.ilike.%${term}%,tagline.ilike.%${term}%,description.ilike.%${term}%`,
+    );
+  }
 
+  // Todos los modelos parten del mismo precio base, así que no se ordena por
+  // precio: el precio final depende de la personalización.
   switch (filters.sort) {
-    case "price-asc":
-      query = query.order("base_price_cents", { ascending: true });
-      break;
-    case "price-desc":
-      query = query.order("base_price_cents", { ascending: false });
+    case "name":
+      query = query.order("name", { ascending: true });
       break;
     case "new":
       query = query.order("created_at", { ascending: false });
@@ -54,7 +81,7 @@ export async function getCatalog(
     default:
       query = query
         .order("featured", { ascending: false })
-        .order("base_price_cents", { ascending: true });
+        .order("name", { ascending: true });
   }
 
   const { data, error } = await query;
@@ -69,7 +96,7 @@ export async function getFeaturedProducts(limit = 3): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, name, tagline, description, category, base_price_cents, badge, capacity_label, leather_label, hero_image, images, tones, texture, featured, active, created_at",
+      "id, slug, name, tagline, description, category, base_price_cents, badge, capacity_label, leather_label, hero_image, images, tones, tags, texture, featured, active, created_at",
     )
     .eq("active", true)
     .eq("featured", true)
@@ -90,7 +117,7 @@ export async function getProductWithOptions(
     .from("products")
     .select(
       `id, slug, name, tagline, description, category, base_price_cents, badge,
-       capacity_label, leather_label, hero_image, images, tones, texture,
+       capacity_label, leather_label, hero_image, images, tones, tags, texture,
        featured, active, created_at,
        option_groups (
          id, product_id, code, label, helper, type, required, max_length,
@@ -123,7 +150,7 @@ export async function getProductsWithOptionsByIds(
     .from("products")
     .select(
       `id, slug, name, tagline, description, category, base_price_cents, badge,
-       capacity_label, leather_label, hero_image, images, tones, texture,
+       capacity_label, leather_label, hero_image, images, tones, tags, texture,
        featured, active, created_at,
        option_groups (
          id, product_id, code, label, helper, type, required, max_length,
@@ -146,35 +173,27 @@ export async function getProductsWithOptionsByIds(
   return map;
 }
 
-export async function getCategories(): Promise<
-  { code: string; label: string; count: number }[]
-> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("products")
-    .select("category")
-    .eq("active", true);
-
-  if (error) return [];
-
-  const labels: Record<string, string> = {
-    tarjetero: "Tarjeteros",
-    bifold: "Bifold Clásicas",
-    larga: "Billeteras Largas",
-    cremallera: "Con Cremallera",
-  };
+/**
+ * Categorías con cuántas piezas quedan en cada una aplicando los demás
+ * filtros (piel, búsqueda). Así los números del chip coinciden con
+ * lo que aparece al tocarlo.
+ */
+export async function getCategories(
+  filters: Omit<CatalogFilters, "category" | "sort"> = {},
+): Promise<{ code: string; label: string; count: number }[]> {
+  const products = await getCatalog({ ...filters, category: undefined }).catch(
+    () => [] as Product[],
+  );
 
   const counts = new Map<string, number>();
-  for (const row of data ?? []) {
-    const c = row.category;
-    counts.set(c, (counts.get(c) ?? 0) + 1);
+  for (const p of products) {
+    counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
   }
 
-  return [...counts.entries()].map(([code, count]) => ({
+  return Object.entries(CATEGORY_LABELS).map(([code, label]) => ({
     code,
-    label: labels[code] ?? code,
-    count,
+    label,
+    count: counts.get(code) ?? 0,
   }));
 }
 

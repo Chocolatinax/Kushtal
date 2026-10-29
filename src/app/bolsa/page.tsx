@@ -10,7 +10,7 @@ import { getCart } from "@/lib/db/cart";
 import { getFeaturedProducts } from "@/lib/db/products";
 import { formatPrice, formatPriceUSD } from "@/lib/format";
 import { qualifiesForFreeShipping } from "@/lib/pricing";
-import type { Cart } from "@/lib/types";
+import { FREE_SHIPPING_THRESHOLD_CENTS, type Cart } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Tu Bolsa de Compra",
@@ -31,7 +31,7 @@ export default async function CartPage() {
       shipping_cents: 0,
       total_cents: 0,
       item_count: 0,
-      free_shipping_threshold_cents: 15000,
+      free_shipping_threshold_cents: FREE_SHIPPING_THRESHOLD_CENTS,
     };
   }
 
@@ -47,8 +47,8 @@ export default async function CartPage() {
           Tu bolsa está vacía
         </h1>
         <p className="mt-3 max-w-md text-[15px] leading-6 text-ink-muted">
-          Todavía no has configurado ninguna pieza. Elegí una silueta y hacela
-          tuya: tono, textura, pespunte y monograma.
+          Todavía no has configurado ninguna pieza. Elige un modelo y hazlo
+          tuyo: color, tipo de piel, forro, accesorios y monograma.
         </p>
 
         <ButtonLink href="/coleccion" size="lg" className="mt-7">
@@ -58,9 +58,9 @@ export default async function CartPage() {
 
         {suggestions.length > 0 && (
           <section className="mt-20">
-            <Eyebrow>Arquetipos del taller</Eyebrow>
+            <Eyebrow>Más elegidos</Eyebrow>
             <h2 className="mt-2 font-display text-[26px] font-semibold text-piedra">
-              Creaciones icónicas
+              Modelos destacados
             </h2>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {suggestions.map((p) => (
@@ -102,7 +102,7 @@ export default async function CartPage() {
             <>
               Te faltan{" "}
               <strong className="text-anil">{formatPrice(missingForFree)}</strong>{" "}
-              para el envío de cortesía
+              para el envío gratis
             </>
           )}
         </p>
@@ -134,7 +134,7 @@ export default async function CartPage() {
             </div>
 
             <Badge tone="craft" className="shrink-0">
-              Trazabilidad 100%
+              Hecha a mano
             </Badge>
           </div>
         </div>
@@ -148,30 +148,32 @@ export default async function CartPage() {
 
             <dl className="mt-5 flex flex-col gap-3 text-[14px]">
               <div className="flex justify-between">
-                <dt className="text-ink-muted">Subtotal marroquinería</dt>
+                <dt className="text-ink-muted">Subtotal</dt>
                 <dd className="font-medium text-piedra tabular-nums">
                   {formatPriceUSD(cart.subtotal_cents)}
                 </dd>
               </div>
 
               <div className="flex justify-between">
-                <dt className="text-ink-muted">Grabados artesanales</dt>
-                <dd className="text-torogoz-ink">Incluidos</dd>
+                <dt className="text-ink-muted">Grabado de monograma</dt>
+                <dd className="text-torogoz-ink">Incluido</dd>
               </div>
 
               <div className="flex justify-between">
-                <dt className="text-ink-muted">Costes de envío</dt>
-                <dd className="text-ink-muted">Se calculan al pagar</dd>
+                <dt className="text-ink-muted">Envío</dt>
+                <dd className={freeShipping ? "text-torogoz-ink" : "text-ink-muted"}>
+                  {freeShipping ? "Gratis" : "Se calcula al pagar"}
+                </dd>
               </div>
             </dl>
 
             <div className="mt-5 flex items-end justify-between gap-4 border-t border-outline-variant/60 pt-5">
               <div>
                 <p className="font-display text-xl font-semibold text-piedra">
-                  Total a abonar
+                  Total estimado
                 </p>
                 <p className="mt-0.5 text-[12px] text-ink-muted">
-                  Impuestos incluidos con factura formal
+                  Precios en dólares, IVA incluido
                 </p>
               </div>
               <p className="font-display text-[28px] leading-8 font-semibold text-piedra tabular-nums">
@@ -184,18 +186,49 @@ export default async function CartPage() {
               <ArrowRight size={15} strokeWidth={2} />
             </ButtonLink>
 
+            {/* Pago rápido, como en el diseño de Stitch: cada botón lleva al
+                checkout, donde se elige el método y se cobra. */}
+            <div className="mt-5 flex items-center gap-3">
+              <span className="h-px flex-1 bg-outline-variant/60" />
+              <span className="eyebrow text-ink-muted">O paga al instante</span>
+              <span className="h-px flex-1 bg-outline-variant/60" />
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <Link
+                href="/checkout"
+                aria-label="Pagar con Apple Pay"
+                className="flex h-10 items-center justify-center rounded-full bg-piedra text-[13px] font-semibold text-algodon transition-opacity hover:opacity-90"
+              >
+                Apple Pay
+              </Link>
+              <Link
+                href="/checkout"
+                aria-label="Pagar con Google Pay"
+                className="flex h-10 items-center justify-center rounded-full bg-surface-high text-[13px] font-semibold text-piedra transition-colors hover:bg-surface-highest"
+              >
+                G Pay
+              </Link>
+              <Link
+                href="/checkout"
+                aria-label="Pagar con PayPal"
+                className="flex h-10 items-center justify-center rounded-full bg-[#FFC439] text-[13px] font-bold italic text-[#003087] transition-opacity hover:opacity-95"
+              >
+                PayPal
+              </Link>
+            </div>
+
             <ButtonLink
               href="/coleccion"
               variant="outline"
-              className="mt-3 w-full"
+              className="mt-4 w-full"
             >
               Seguir explorando
             </ButtonLink>
 
             <p className="mt-5 flex items-start gap-2 text-[12px] leading-4 text-ink-muted">
               <ShieldCheck size={14} strokeWidth={1.7} className="mt-px shrink-0 text-torogoz" />
-              Al confirmar tu pedido, nuestro maestro guarnicionero iniciará la
-              preparación de tus cueros.
+              Al confirmar tu pedido empezamos a cortar y coser tu pieza a
+              mano.
             </p>
           </div>
         </aside>
@@ -205,14 +238,13 @@ export default async function CartPage() {
         <section className="mt-20 border-t border-outline-variant/60 pt-14">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <Eyebrow>Cuidado y complementos</Eyebrow>
+              <Eyebrow>Más modelos</Eyebrow>
               <h2 className="mt-2 font-display text-[26px] leading-8 font-semibold text-piedra md:text-[32px]">
                 También te podría gustar
               </h2>
             </div>
             <p className="max-w-sm text-[13px] leading-5 text-ink-muted">
-              Añade accesorios confeccionados con los mismos estándares de
-              longevidad para enriquecer la experiencia de tu pedido.
+              Otros modelos que también puedes personalizar desde $50.
             </p>
           </div>
 

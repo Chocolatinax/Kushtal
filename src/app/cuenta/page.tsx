@@ -76,10 +76,10 @@ export default async function AccountPage() {
               <Package size={20} strokeWidth={1.6} />
             </span>
             <p className="mt-4 font-display text-xl font-semibold text-piedra">
-              Todavía no tenés encargos
+              Todavía no tienes pedidos
             </p>
             <p className="mt-2 text-[13px] text-ink-muted">
-              Cuando configures tu primera pieza, acá vas a poder seguir su paso
+              Cuando configures tu primera pieza, aquí podrás seguir su paso
               por el taller.
             </p>
             <ButtonLink href="/coleccion" className="mt-6">

@@ -22,7 +22,7 @@ export function formatPriceUSD(cents: number): string {
 }
 
 export function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat("es-ES", {
+  return new Intl.DateTimeFormat("es-SV", {
     day: "numeric",
     month: "long",
     year: "numeric",
