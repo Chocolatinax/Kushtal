@@ -1,0 +1,64 @@
+{
+  "modelos": {
+    "bifold-signature-atelier": {
+      "azabache": "/configurador/modelos/bifold-signature-atelier/azabache.jpg",
+      "caramelo": "/configurador/modelos/bifold-signature-atelier/caramelo.jpg",
+      "chocolate": "/configurador/modelos/bifold-signature-atelier/chocolate.jpg",
+      "indigo": "/configurador/modelos/bifold-signature-atelier/indigo.jpg"
+    },
+    "billetera-continental-roma": {
+      "azabache": "/configurador/modelos/billetera-continental-roma/azabache.jpg",
+      "caramelo": "/configurador/modelos/billetera-continental-roma/caramelo.jpg",
+      "chocolate": "/configurador/modelos/billetera-continental-roma/chocolate.jpg"
+    },
+    "billetera-zip-accordion": {
+      "azabache": "/configurador/modelos/billetera-zip-accordion/azabache.jpg",
+      "chocolate": "/configurador/modelos/billetera-zip-accordion/chocolate.jpg",
+      "salvia": "/configurador/modelos/billetera-zip-accordion/salvia.jpg"
+    },
+    "portadocumentos-postal": {
+      "caramelo": "/configurador/modelos/portadocumentos-postal/caramelo.jpg",
+      "chocolate": "/configurador/modelos/portadocumentos-postal/chocolate.jpg",
+      "indigo": "/configurador/modelos/portadocumentos-postal/indigo.jpg"
+    },
+    "tarjetero-atelier-no-01": {
+      "azabache": "/configurador/modelos/tarjetero-atelier-no-01/azabache.jpg",
+      "caramelo": "/configurador/modelos/tarjetero-atelier-no-01/caramelo.jpg",
+      "indigo": "/configurador/modelos/tarjetero-atelier-no-01/indigo.jpg",
+      "salvia": "/configurador/modelos/tarjetero-atelier-no-01/salvia.jpg"
+    },
+    "tarjetero-plegable-slim": {
+      "azabache": "/configurador/modelos/tarjetero-plegable-slim/azabache.jpg",
+      "indigo": "/configurador/modelos/tarjetero-plegable-slim/indigo.jpg",
+      "salvia": "/configurador/modelos/tarjetero-plegable-slim/salvia.jpg"
+    }
+  },
+  "materiales": {
+    "airtag": {
+      "si": "/configurador/materiales/airtag/si.jpg"
+    },
+    "clip": {
+      "si": "/configurador/materiales/clip/si.jpg"
+    },
+    "herrajes": {
+      "laton": "/configurador/materiales/herrajes/laton.jpg",
+      "niquel-mate": "/configurador/materiales/herrajes/niquel-mate.jpg",
+      "oro-mate": "/configurador/materiales/herrajes/oro-mate.jpg"
+    },
+    "interior": {
+      "algodon": "/configurador/materiales/interior/algodon.jpg",
+      "anil": "/configurador/materiales/interior/anil.jpg",
+      "arena": "/configurador/materiales/interior/arena.jpg",
+      "tormenta": "/configurador/materiales/interior/tormenta.jpg"
+    },
+    "rfid": {
+      "si": "/configurador/materiales/rfid/si.jpg"
+    },
+    "textura": {
+      "crazy-horse": "/configurador/materiales/textura/crazy-horse.jpg",
+      "curtido-vegetal": "/configurador/materiales/textura/curtido-vegetal.jpg",
+      "grano-natural": "/configurador/materiales/textura/grano-natural.jpg",
+      "vacuna-lisa": "/configurador/materiales/textura/vacuna-lisa.jpg"
+    }
+  }
+}
