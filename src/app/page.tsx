@@ -71,7 +71,7 @@ const STEPS = [
     n: "02",
     tag: "Personalización",
     title: "Diseña cada detalle",
-    body: "Color, tipo de piel, forro, herrajes y accesorios como bloqueo RFID. Graba tus iniciales en golpe seco o lámina de oro y mira el precio en tiempo real.",
+    body: "Color, tipo de piel, forro, herrajes y accesorios como el espacio para AirTag. Graba tus iniciales en golpe seco o lámina de oro y mira el precio en tiempo real.",
     meta: "Monograma en golpe seco incluido",
     icon: PenLine,
   },
@@ -393,28 +393,27 @@ export default async function HomePage() {
               </span>
               <div>
                 <h3 className="font-display text-[22px] leading-[30px]">
-                  ¿Es un regalo o un pedido para tu empresa?
+                  ¿Es un regalo?
                 </h3>
                 <p className="max-w-xl text-[13px] leading-5 text-ceniza">
-                  Agrega la caja de regalo y su nombre grabado, o escríbenos
-                  para pedidos corporativos desde 10 unidades. Todas las piezas
-                  tienen 1 año de garantía en costuras y herrajes.
+                  Agrega la caja de regalo y su nombre grabado. Todas las
+                  piezas tienen 30 días de garantía en costuras y herrajes.
                 </p>
               </div>
             </div>
             <div className="flex shrink-0 flex-wrap gap-3">
               <Link
-                href="/personalizar/bifold-signature-atelier?estuche=rigido#grupo-grabado"
+                href="/regalos-personalizados"
                 className="inline-flex items-center gap-2 rounded-full bg-cafe px-6 py-3 text-[13px] font-semibold text-algodon transition-colors hover:bg-cafe/90"
               >
                 <Gift size={16} strokeWidth={1.8} />
                 Diseñar un regalo
               </Link>
               <Link
-                href="/contacto"
+                href="/garantia"
                 className="inline-flex items-center gap-2 rounded-full border border-algodon/50 px-6 py-3 text-[13px] font-semibold text-algodon transition-colors hover:bg-algodon/10"
               >
-                Pedidos corporativos
+                Ver la garantía
               </Link>
             </div>
           </div>

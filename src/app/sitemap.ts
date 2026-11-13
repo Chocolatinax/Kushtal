@@ -7,6 +7,7 @@ import { SITE_URL } from "@/lib/site";
 const STATIC_PATHS = [
   { path: "/", priority: 1 },
   { path: "/coleccion", priority: 0.9 },
+  { path: "/regalos-personalizados", priority: 0.8 },
   { path: "/sobre-kushtal", priority: 0.5 },
   { path: "/artesania", priority: 0.5 },
   { path: "/envios", priority: 0.4 },

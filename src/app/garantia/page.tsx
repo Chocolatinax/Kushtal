@@ -5,7 +5,7 @@ import { InfoPage } from "@/components/layout/info-page";
 export const metadata: Metadata = {
   title: "Garantía",
   description:
-    "Todas las billeteras Kushtal tienen 1 año de garantía en costuras y herrajes por defectos de fabricación.",
+    "Todas las billeteras Kushtal tienen 30 días de garantía en costuras y herrajes por defectos de fabricación.",
   alternates: { canonical: "/garantia" },
 };
 
@@ -13,8 +13,8 @@ export default function WarrantyPage() {
   return (
     <InfoPage
       eyebrow="Garantía"
-      title="1 año de garantía en costuras y herrajes"
-      intro="Si tu billetera presenta un defecto de fabricación durante el primer año, la reparamos o la cambiamos sin costo."
+      title="30 días de garantía en costuras y herrajes"
+      intro="Si tu billetera presenta un defecto de fabricación durante los primeros 30 días, la reparamos o la cambiamos sin costo."
       sections={[
         {
           title: "Qué cubre",

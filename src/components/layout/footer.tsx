@@ -19,8 +19,9 @@ const COLUMNS = [
   {
     title: "Categorías",
     links: [
-      ...SILOS.map((s) => ({ label: s.label, href: routePath(s) })),
       { label: "Toda la colección", href: "/coleccion" },
+      ...SILOS.map((s) => ({ label: s.label, href: routePath(s) })),
+      { label: "Regalos personalizados", href: "/regalos-personalizados" },
     ],
   },
   {
@@ -134,7 +135,7 @@ export function Footer() {
           </div>
           <p className="label-pill text-[10px] sm:ml-auto">
             Pago seguro{" "}
-            <span className="ml-3">Visa · Mastercard · Apple Pay · PayPal</span>
+            <span className="ml-3">Visa · Mastercard · PayPal</span>
           </p>
         </div>
       </div>

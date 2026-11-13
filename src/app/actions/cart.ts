@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { includesRfid } from "@/lib/catalog-routes";
 import { getOrCreateCartId } from "@/lib/db/cart";
 import { getProductWithOptions } from "@/lib/db/products";
 import { ConfigurationError, priceConfiguration } from "@/lib/pricing";
@@ -35,6 +36,10 @@ export async function addToCart(input: unknown): Promise<ActionResult> {
   }
 
   const { slug, quantity, config } = parsed.data;
+
+  // El RFID solo existe en los modelos de las páginas RFID; en el resto se
+  // descarta aunque venga en el payload.
+  if (!includesRfid(slug, config.rfid)) delete config.rfid;
 
   const product = await getProductWithOptions(slug);
   if (!product) return { ok: false, error: "Esa pieza ya no está disponible" };

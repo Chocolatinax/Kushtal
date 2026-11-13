@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 
 import { Configurator } from "@/components/configurator/configurator";
 import { Badge, Eyebrow } from "@/components/ui/badge";
+import { includesRfid } from "@/lib/catalog-routes";
 import { getProductWithOptions } from "@/lib/db/products";
 import { SITE_URL } from "@/lib/site";
 import { COMMON_SPECS, PRODUCT_SPECS } from "@/lib/product-specs";
@@ -57,8 +58,19 @@ export default async function ConfiguratorPage({
     ),
   );
 
-  const product = await getProductWithOptions(slug).catch(() => null);
-  if (!product) notFound();
+  const fetched = await getProductWithOptions(slug).catch(() => null);
+  if (!fetched) notFound();
+
+  // RFID: solo incluido (y fijo) al abrir un modelo RFID desde su página de
+  // la arquitectura. En cualquier otro caso el grupo no existe.
+  const rfidIncluded = includesRfid(fetched.slug, preset.rfid);
+  if (!rfidIncluded) delete preset.rfid;
+  const product = rfidIncluded
+    ? fetched
+    : {
+        ...fetched,
+        option_groups: fetched.option_groups.filter((g) => g.code !== "rfid"),
+      };
 
   const specs = PRODUCT_SPECS[product.slug];
 
@@ -152,6 +164,7 @@ export default async function ConfiguratorPage({
           product={product}
           images={getVariantImages(product.slug)}
           preset={preset}
+          locked={rfidIncluded ? ["rfid"] : []}
         />
       </div>
 

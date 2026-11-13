@@ -40,6 +40,9 @@
     "clip": {
       "si": "/configurador/materiales/clip/si.jpg"
     },
+    "estuche": {
+      "rigido": "/configurador/materiales/estuche/rigido.webp"
+    },
     "herrajes": {
       "laton": "/configurador/materiales/herrajes/laton.jpg",
       "niquel-mate": "/configurador/materiales/herrajes/niquel-mate.jpg",

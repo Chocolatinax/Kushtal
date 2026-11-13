@@ -479,7 +479,7 @@ export default function CraftPage() {
               className="inline-flex items-center gap-2 pt-2 eyebrow tracking-wider text-cafe hover:text-anil"
             >
               <ShieldCheck size={16} strokeWidth={1.8} />
-              1 año de garantía en costuras y herrajes
+              30 días de garantía en costuras y herrajes
             </Link>
           </div>
 
@@ -536,7 +536,7 @@ export default function CraftPage() {
             <span>·</span>
             <span>Envíos a todo El Salvador</span>
             <span>·</span>
-            <span>1 año de garantía</span>
+            <span>30 días de garantía</span>
           </p>
         </div>
       </section>

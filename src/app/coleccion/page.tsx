@@ -39,7 +39,7 @@ const PILLARS = [
     eyebrow: "Compra tranquila",
     title: "Garantía Kushtal",
     body: "Si una costura o un herraje falla por un defecto de fabricación, la reparamos o la cambiamos sin costo.",
-    tag: "1 año de garantía",
+    tag: "30 días de garantía",
   },
 ];
 
@@ -197,9 +197,9 @@ export default async function CatalogPage({ searchParams }: PageProps) {
                 ¿Quieres diseñar tu billetera desde cero?
               </p>
               <p className="mt-2 max-w-xl text-[13px] leading-5 text-ink-muted">
-                Elige color, piel, forro, herrajes y accesorios como
-                bloqueo RFID, y mira tu monograma en golpe seco o lámina de oro
-                antes de comprar.
+                Elige color, piel, forro, herrajes y accesorios como el
+                espacio para AirTag, y mira tu monograma en golpe seco o
+                lámina de oro antes de comprar.
               </p>
             </div>
 

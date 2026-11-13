@@ -53,5 +53,5 @@ export const COMMON_SPECS = [
   { label: "Confección", value: "A mano, de 3 a 5 días hábiles" },
   { label: "Costura", value: "A dos agujas con hilo de lino encerado" },
   { label: "Envío", value: "A los 14 departamentos; gratis desde $75" },
-  { label: "Garantía", value: "1 año en costuras y herrajes" },
+  { label: "Garantía", value: "30 días en costuras y herrajes" },
 ];

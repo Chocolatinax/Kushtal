@@ -17,6 +17,8 @@ export interface CatalogFilters {
   categories?: string[];
   /** El producto debe tener todas estas etiquetas (hombre, mujer, slim…). */
   tags?: string[];
+  /** Modelos exactos (slug), como los fija la arquitectura web. */
+  slugs?: string[];
   texture?: string;
   /** Texto libre del buscador: nombre, subtítulo o descripción. */
   q?: string;
@@ -58,6 +60,9 @@ export async function getCatalog(
   }
   if (filters.tags && filters.tags.length > 0) {
     query = query.contains("tags", filters.tags);
+  }
+  if (filters.slugs && filters.slugs.length > 0) {
+    query = query.in("slug", filters.slugs);
   }
   if (filters.texture && filters.texture !== "all") {
     query = query.eq("texture", filters.texture);

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Briefcase, Mail, MessageCircle } from "lucide-react";
+import { Gift, Mail, MessageCircle } from "lucide-react";
 
 import { InfoPage } from "@/components/layout/info-page";
 import { CONTACT_EMAIL, WHATSAPP_NUMBER } from "@/lib/site";
@@ -7,7 +7,7 @@ import { CONTACT_EMAIL, WHATSAPP_NUMBER } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contacto",
   description:
-    "Escríbenos por WhatsApp o correo para dudas sobre tu pedido, muestras de piel o pedidos corporativos de billeteras personalizadas.",
+    "Escríbenos por WhatsApp o correo para dudas sobre tu pedido, muestras de piel o regalos con billeteras personalizadas.",
   alternates: { canonical: "/contacto" },
 };
 
@@ -29,11 +29,11 @@ const CHANNELS = [
     external: false,
   },
   {
-    icon: Briefcase,
-    title: "Pedidos corporativos",
-    body: "Billeteras con el logo de tu empresa, a partir de 10 unidades. Te enviamos una cotización.",
-    href: `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Pedido corporativo")}`,
-    cta: "Pedir cotización",
+    icon: Gift,
+    title: "Regalos",
+    body: "¿Buscas un regalo? Elige el modelo, graba su nombre y agrega la caja de regalo.",
+    href: "/regalos-personalizados",
+    cta: "Ver regalos personalizados",
     external: false,
   },
 ];

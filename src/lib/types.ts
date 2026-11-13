@@ -167,6 +167,8 @@ export interface Order {
   shipping_method: string;
   shipping_address: ShippingAddress;
   stripe_session_id: string | null;
+  /** Token secreto del enlace del pedido (para verlo sin cuenta). */
+  access_token: string;
   created_at: string;
   items: OrderItem[];
 }

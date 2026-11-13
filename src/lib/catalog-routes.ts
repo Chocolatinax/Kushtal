@@ -19,7 +19,7 @@ export interface CatalogRoute {
   intro: string;
   keyword: string;
   secondary: string[];
-  filter: { tags?: string[]; categories?: string[] };
+  filter: { tags?: string[]; categories?: string[]; slugs?: string[] };
   preset?: Configuration;
   /** Sección del configurador a la que se salta al entrar (id del fieldset). */
   anchor?: string;
@@ -27,8 +27,6 @@ export interface CatalogRoute {
   image: string;
   faq: { q: string; a: string }[];
 }
-
-const BILLETERAS = ["bifold", "larga", "cremallera"];
 
 export const CATALOG_ROUTES: CatalogRoute[] = [
   /* ------------------------------------------------ Silo: hombre */
@@ -40,10 +38,11 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
     description:
       "Billeteras de cuero para hombre y caballero, personalizables desde $50: elige color, piel, forro y grabado. Envíos a todo El Salvador.",
     intro:
-      "Billeteras para caballero hechas a mano y diseñadas por ti: bifold clásica, tarjeteros slim y porta pasaporte. Elige el color, el tipo de cuero y graba tus iniciales.",
+      "Billeteras para caballero hechas a mano y diseñadas por ti, empezando por la Bifold Signature. Elige el color, el tipo de cuero y graba tus iniciales.",
     keyword: "billetera hombre",
     secondary: ["billetera para caballero", "billetera caballero", "billetera hombre original"],
-    filter: { tags: ["hombre"] },
+    // Arquitectura: /billeteras-hombre/ → Bifold Signature.
+    filter: { slugs: ["bifold-signature-atelier"] },
     image: "/configurador/modelos/bifold-signature-atelier/caramelo.jpg",
     faq: [
       {
@@ -64,10 +63,12 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
     description:
       "Billeteras de cuero para hombre con bloqueo RFID y NFC que protegen tus tarjetas contactless. Personalizables desde $50 en El Salvador.",
     intro:
-      "Agrega a tu billetera un forro que bloquea la lectura sin contacto (RFID y NFC) de tus tarjetas. Al abrir cualquier modelo desde aquí, el bloqueo ya viene activado.",
+      "La versión con bloqueo RFID de nuestra billetera de caballero: un forro que impide la lectura sin contacto (RFID y NFC) de tus tarjetas. Viene incluido de fábrica en estos modelos.",
     keyword: "billetera con bloqueo rfid",
     secondary: ["billetera con bloqueo nfc", "billeteras para hombre con bloqueo rfid"],
-    filter: { tags: ["hombre"] },
+    // El RFID no es un accesorio libre: solo existe en estos modelos y
+    // únicamente al abrirlos desde esta página (viene incluido, no se quita).
+    filter: { slugs: ["bifold-signature-atelier"] },
     preset: { rfid: "si" },
     image: "/configurador/materiales/rfid/si.jpg",
     faq: [
@@ -76,58 +77,11 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
         a: "Impide que alguien lea tus tarjetas contactless a distancia con un lector. También bloquea NFC.",
       },
       {
-        q: "¿Cuánto cuesta agregar RFID?",
-        a: "Suma $8 al precio de tu billetera. Lo puedes agregar a cualquier modelo desde el configurador.",
+        q: "¿Cuánto cuesta la versión con RFID?",
+        a: "Suma $8 al precio de la billetera. El bloqueo viene incluido en los modelos de esta página y sigues eligiendo color, piel, forro y grabado.",
       },
     ],
   },
-  {
-    segments: ["billeteras-hombre", "minimalistas-slim"],
-    label: "Minimalistas slim",
-    h1: "Billeteras minimalistas y slim para hombre",
-    title: "Billetera compacta y slim para hombre",
-    description:
-      "Billeteras compactas y slim para hombre: tarjeteros de cuero delgados para el bolsillo delantero. Personalizables desde $50.",
-    intro:
-      "Para quien quiere llevar solo lo esencial: tarjeteros de 5 mm de grosor y plegables con cierre magnético, cómodos en el bolsillo delantero.",
-    keyword: "billetera compacta",
-    secondary: ["billetera hombre compacta"],
-    filter: { tags: ["hombre", "slim"] },
-    image: "/configurador/modelos/tarjetero-plegable-slim/azabache.jpg",
-    faq: [
-      {
-        q: "¿Cuántas tarjetas caben en una billetera slim?",
-        a: "El Tarjetero No. 01 lleva 4 ranuras y un bolsillo central; el Tarjetero Plegable Slim, hasta 8 tarjetas.",
-      },
-    ],
-  },
-  {
-    segments: ["billeteras-hombre", "cuero-personalizadas"],
-    label: "De cuero personalizadas",
-    h1: "Billeteras de cuero personalizadas para hombre",
-    title: "Billetera de cuero personalizada para hombre",
-    description:
-      "Billeteras de cuero genuino para hombre, personalizadas con tu nombre o iniciales grabadas. Cuero vacuno, grano entero o Crazy Horse.",
-    intro:
-      "Cuero vacuno genuino, grano entero, curtido vegetal o Crazy Horse, con tu monograma grabado en golpe seco (incluido) o lámina de oro.",
-    keyword: "billetera para hombre personalizada",
-    secondary: [
-      "billetera hombre personalizada",
-      "billetera hombre grabada",
-      "billetera cuero genuino hombre",
-      "billetera cuero vacuno hombre",
-    ],
-    filter: { tags: ["hombre"], categories: BILLETERAS },
-    anchor: "grupo-grabado",
-    image: "/configurador/materiales/textura/vacuna-lisa.jpg",
-    faq: [
-      {
-        q: "¿El grabado tiene costo?",
-        a: "No. El monograma de hasta 12 caracteres en golpe seco va incluido. La lámina de oro suma $8.",
-      },
-    ],
-  },
-
   /* ------------------------------------------------ Silo: mujer */
   {
     segments: ["billeteras-mujer"],
@@ -137,10 +91,11 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
     description:
       "Billeteras de cuero para mujer y dama, personalizables desde $50: largas, con cremallera y tarjeteros. Envíos a todo El Salvador.",
     intro:
-      "Billeteras para dama hechas a mano: la continental larga, la de cremallera con cinco divisiones y tarjeteros compactos. Tú eliges el color, la piel y el forro.",
+      "Billeteras para dama hechas a mano: la Continental Roma y la Billetera con Cremallera de cinco divisiones. Tú eliges el color, la piel y el forro.",
     keyword: "billetera mujer",
     secondary: ["billetera para mujer", "billetera dama", "billetera para dama"],
-    filter: { tags: ["mujer"] },
+    // Arquitectura: /billeteras-mujer/ → Continental Roma y Billetera con Cremallera.
+    filter: { slugs: ["billetera-continental-roma", "billetera-zip-accordion"] },
     image: "/configurador/modelos/billetera-zip-accordion/salvia.jpg",
     faq: [
       {
@@ -153,28 +108,6 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
       },
     ],
   },
-  {
-    segments: ["billeteras-mujer", "cuero-personalizadas"],
-    label: "De cuero personalizadas",
-    h1: "Billeteras de cuero personalizadas para mujer",
-    title: "Billetera de cuero personalizada para mujer",
-    description:
-      "Billeteras de cuero vacuno para mujer, personalizadas con su nombre o iniciales. Diseña la tuya desde $50.",
-    intro:
-      "Elige el cuero, el forro y el color, y graba su nombre o iniciales. Ideal como regalo.",
-    keyword: "billetera mujer personalizada",
-    secondary: ["billetera cuero vacuno mujer"],
-    filter: { tags: ["mujer"], categories: BILLETERAS },
-    anchor: "grupo-grabado",
-    image: "/configurador/modelos/billetera-continental-roma/caramelo.jpg",
-    faq: [
-      {
-        q: "¿Cuánto tarda una billetera personalizada?",
-        a: "De 3 a 5 días hábiles de confección más 1 a 3 días de entrega en El Salvador.",
-      },
-    ],
-  },
-
   /* ------------------------------------------------ Silo: tarjeteros */
   {
     segments: ["tarjeteros"],
@@ -187,7 +120,8 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
       "Tarjeteros delgados para llevar solo lo esencial: el Tarjetero No. 01 de 4 ranuras y el Plegable Slim con cierre magnético.",
     keyword: "tarjetero",
     secondary: ["tarjetero original", "tarjetero ejecutivo", "tarjetero unisex"],
-    filter: { categories: ["tarjetero"] },
+    // Arquitectura: /tarjeteros/ → Tarjetero No. 01 y Tarjetero Plegable Slim.
+    filter: { slugs: ["tarjetero-atelier-no-01", "tarjetero-plegable-slim"] },
     image: "/configurador/modelos/tarjetero-atelier-no-01/indigo.jpg",
     faq: [
       {
@@ -244,37 +178,16 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
     description:
       "Tarjeteros de cuero con bloqueo RFID y NFC para proteger tus tarjetas de la clonación. Desde $50.",
     intro:
-      "Protege tus tarjetas contactless de la clonación. Al abrir un modelo desde aquí, el bloqueo RFID ya viene activado.",
+      "Protege tus tarjetas contactless de la clonación. Estos tarjeteros vienen con el bloqueo RFID incluido de fábrica.",
     keyword: "tarjetero con bloqueo rfid",
     secondary: ["tarjetero mujer con bloqueo rfid", "tarjetero con bloqueo nfc"],
-    filter: { categories: ["tarjetero"] },
+    filter: { slugs: ["tarjetero-atelier-no-01", "tarjetero-plegable-slim"] },
     preset: { rfid: "si" },
     image: "/configurador/materiales/rfid/si.jpg",
     faq: [
       {
         q: "¿El bloqueo RFID hace más grueso el tarjetero?",
         a: "No de forma notable: es una capa delgada dentro del forro.",
-      },
-    ],
-  },
-  {
-    segments: ["tarjeteros", "cuero-grabados"],
-    label: "De cuero grabados",
-    h1: "Tarjeteros de cuero grabados",
-    title: "Tarjetero personalizable de cuero grabado",
-    description:
-      "Tarjeteros de cuero personalizables con tus iniciales o nombre grabado en golpe seco o lámina de oro.",
-    intro:
-      "Graba hasta 12 caracteres en la cara interior: iniciales, un nombre o una fecha. El golpe seco va incluido.",
-    keyword: "tarjetero personalizable",
-    secondary: [],
-    filter: { categories: ["tarjetero"] },
-    anchor: "grupo-grabado",
-    image: "/configurador/modelos/tarjetero-atelier-no-01/caramelo.jpg",
-    faq: [
-      {
-        q: "¿Puedo grabar el logo de mi empresa?",
-        a: "Para logos y pedidos corporativos desde 10 unidades, escríbenos desde la página de contacto.",
       },
     ],
   },
@@ -297,6 +210,23 @@ export function childrenOf(silo: CatalogRoute): CatalogRoute[] {
   return CATALOG_ROUTES.filter(
     (r) => r.segments.length === 2 && r.segments[0] === silo.segments[0],
   );
+}
+
+/**
+ * El RFID no se ofrece como accesorio en el configurador: solo viene
+ * incluido en los modelos de las páginas RFID de la arquitectura, y solo
+ * cuando se abren desde ahí (?rfid=si).
+ */
+export const RFID_MODELS: string[] = [
+  ...new Set(
+    CATALOG_ROUTES.filter((r) => r.preset?.rfid === "si").flatMap(
+      (r) => r.filter.slugs ?? [],
+    ),
+  ),
+];
+
+export function includesRfid(slug: string, rfid: string | undefined): boolean {
+  return rfid === "si" && RFID_MODELS.includes(slug);
 }
 
 /** Enlace al configurador con el preset y el ancla de la subcategoría. */

@@ -193,21 +193,7 @@ export default async function CartPage() {
               <span className="eyebrow text-ink-muted">O paga al instante</span>
               <span className="h-px flex-1 bg-outline-variant/60" />
             </div>
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              <Link
-                href="/checkout"
-                aria-label="Pagar con Apple Pay"
-                className="flex h-10 items-center justify-center rounded-full bg-piedra text-[13px] font-semibold text-algodon transition-opacity hover:opacity-90"
-              >
-                Apple Pay
-              </Link>
-              <Link
-                href="/checkout"
-                aria-label="Pagar con Google Pay"
-                className="flex h-10 items-center justify-center rounded-full bg-surface-high text-[13px] font-semibold text-piedra transition-colors hover:bg-surface-highest"
-              >
-                G Pay
-              </Link>
+            <div className="mt-3 grid grid-cols-1 gap-2">
               <Link
                 href="/checkout"
                 aria-label="Pagar con PayPal"

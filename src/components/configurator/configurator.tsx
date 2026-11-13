@@ -31,11 +31,14 @@ export function Configurator({
   product,
   images,
   preset = {},
+  locked = [],
 }: {
   product: ProductWithOptions;
   images: VariantImages;
   /** Opciones preelegidas al llegar desde una categoría (p. ej. rfid: "si"). */
   preset?: Configuration;
+  /** Accesorios incluidos de fábrica que no se pueden quitar (p. ej. "rfid"). */
+  locked?: string[];
 }) {
   const router = useRouter();
   const groups = product.option_groups;
@@ -157,12 +160,14 @@ export function Configurator({
   const tone = pick("tono");
   const toggles = groups.filter((g) => g.type === "toggle");
 
-  // Fotos de detalle: piel, forro, herrajes y luego los accesorios activos.
+  // Fotos de detalle: piel, forro, herrajes, los accesorios activos y, si es
+  // regalo, la caja rígida (la funda de lino no tiene foto propia).
   const detailGroups = [
     "textura",
     "interior",
     "herrajes",
     ...toggles.map((g) => g.code),
+    ...(config.estuche === "rigido" ? ["estuche"] : []),
   ];
   const details: PreviewDetail[] = detailGroups.flatMap((code) => {
     const group = groups.find((g) => g.code === code);
@@ -228,9 +233,11 @@ export function Configurator({
                 key="accesorios"
                 groups={toggles}
                 config={config}
-                onToggle={(code, on) =>
-                  choose(code, on ? (groups.find((g) => g.code === code)?.values[0]?.code ?? "") : "")
-                }
+                locked={locked}
+                onToggle={(code, on) => {
+                  if (locked.includes(code)) return;
+                  choose(code, on ? (groups.find((g) => g.code === code)?.values[0]?.code ?? "") : "");
+                }}
               />
             );
           })}
@@ -389,10 +396,12 @@ function OptionGroupBlock({
 function AccessoriesBlock({
   groups,
   config,
+  locked,
   onToggle,
 }: {
   groups: OptionGroup[];
   config: Configuration;
+  locked: string[];
   onToggle: (code: string, on: boolean) => void;
 }) {
   return (
@@ -411,19 +420,22 @@ function AccessoriesBlock({
         {groups.map((group) => {
           const value = group.values[0];
           if (!value) return null;
-          const isOn = Boolean(config[group.code]);
+          const isLocked = locked.includes(group.code);
+          const isOn = isLocked || Boolean(config[group.code]);
           return (
             <button
               key={group.id}
               type="button"
               role="switch"
               aria-checked={isOn}
+              aria-disabled={isLocked}
               onClick={() => onToggle(group.code, !isOn)}
               className={cn(
                 "flex items-start gap-3 rounded-lg border p-4 text-left transition-all",
                 isOn
                   ? "border-anil border-[1.5px] bg-anil/[0.04] shadow-[0_0_0_3px_rgb(30_43_79_/_0.07)]"
                   : "border-outline-variant bg-surface-lowest hover:border-anil/50 hover:-translate-y-px",
+                isLocked && "cursor-default",
               )}
             >
               <span
@@ -443,6 +455,11 @@ function AccessoriesBlock({
                 )}
                 <span className="mt-3 text-[13px] font-semibold text-cafe">
                   +{formatPrice(value.price_delta_cents)}
+                  {isLocked && (
+                    <span className="ml-2 text-[11px] font-semibold uppercase tracking-wider text-torogoz-ink">
+                      Incluido en este modelo
+                    </span>
+                  )}
                 </span>
               </span>
             </button>

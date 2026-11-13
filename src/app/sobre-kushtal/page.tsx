@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 const FACTS = [
   { label: "Origen", value: "Taller en El Salvador" },
   { label: "Producción", value: "Hecho a pedido · sin producción en serie" },
-  { label: "Garantía", value: "1 año en costuras y herrajes" },
+  { label: "Garantía", value: "30 días en costuras y herrajes" },
 ];
 
 /** Tira de fotos reales en lugar de la imagen de Stitch (era una captura). */
@@ -64,7 +64,7 @@ const PRICE_BLOCKS = [
     tag: "04 / Función",
     title: "Accesorios",
     price: "+$6 a +$10 c/u",
-    body: "Bloqueo RFID contra la lectura de tus tarjetas, espacio oculto para AirTag o clip para billetes.",
+    body: "Espacio oculto para AirTag o clip para billetes. Los modelos RFID traen además el bloqueo contra la lectura de tus tarjetas.",
     foot: "Seguridad y orden",
   },
   {
@@ -91,9 +91,9 @@ const AUDIENCES = [
   },
   {
     n: "03",
-    title: "Empresas y pedidos corporativos",
-    body: "Regalos para clientes o equipos, con el logo o las iniciales de la empresa. Hacemos pedidos a partir de 10 unidades con cotización a medida.",
-    foot: "Pedidos corporativos · Desde 10 unidades",
+    title: "Quien quiere una pieza única",
+    body: "Personas que no se conforman con lo de vitrina: eligen cada detalle en el configurador, desde la piel y el forro hasta los herrajes, y la ven antes de comprar.",
+    foot: "Diseño propio · Hecha a mano",
   },
 ];
 
@@ -376,7 +376,7 @@ export default function AboutPage() {
             <span className="text-outline-variant">·</span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck size={15} strokeWidth={1.8} className="text-cafe" />
-              1 año de garantía
+              30 días de garantía
             </span>
           </p>
         </div>

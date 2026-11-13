@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getCart } from "@/lib/db/cart";
+import { rememberOrder, saveAddress } from "@/lib/demo-session";
 import { generateOrderNumber } from "@/lib/format";
 import { resolveShipping, shippingCostCents } from "@/lib/pricing";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -54,7 +55,7 @@ const checkoutSchema = z.object({
   country: z.string().trim().min(2).default("SV"),
   shipping_method: z.enum(["standard", "express"]).default("standard"),
   payment_method: z
-    .enum(["card", "wallet", "paypal", "transfer"])
+    .enum(["card", "paypal"])
     .default("card"),
   save_info: z.coerce.boolean().default(false),
 });
@@ -109,10 +110,9 @@ async function submitOrder(formData: FormData): Promise<CheckoutState> {
     country: input.country,
   };
 
-  // PayPal y transferencia se cobran fuera de la web: el pedido queda
-  // pendiente y se le escribe al cliente. Tarjeta y billeteras van a Stripe.
-  const paysOffline =
-    input.payment_method === "paypal" || input.payment_method === "transfer";
+  // PayPal se cobra fuera de la web: el pedido queda pendiente y se le
+  // escribe al cliente. La tarjeta va a Stripe.
+  const paysOffline = input.payment_method === "paypal";
   const stripe = paysOffline ? null : getStripe();
 
   const { data: order, error: orderError } = await supabase
@@ -156,16 +156,12 @@ async function submitOrder(formData: FormData): Promise<CheckoutState> {
     return { error: "No se pudieron guardar las piezas del pedido." };
   }
 
-  if (user && input.save_info) {
-    await supabase
-      .from("profiles")
-      .update({
-        full_name: `${input.first_name} ${input.last_name}`,
-        phone: input.phone,
-        default_address: shippingAddress,
-      })
-      .eq("id", user.id);
+  // Demo: los datos de envío y el pedido se recuerdan en este navegador
+  // para precargar el próximo checkout y listarlo en "Mi cuenta".
+  if (input.save_info) {
+    await saveAddress(shippingAddress);
   }
+  await rememberOrder(order.order_number, order.access_token);
 
   const origin = await getOrigin();
   const confirmUrl = `${origin}/pedido/${order.order_number}?t=${order.access_token}`;

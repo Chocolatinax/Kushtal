@@ -3,35 +3,43 @@ import { Search, ShoppingBag, User } from "lucide-react";
 
 import { childrenOf, routePath, SILOS } from "@/lib/catalog-routes";
 import { getCartCount } from "@/lib/db/cart";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getCatalog } from "@/lib/db/products";
 import { CollectionMenu } from "./collection-menu";
 import { MobileNav, type NavItem } from "./mobile-nav";
 
 /**
- * "Colección" abre un panel con las categorías y subcategorías de la
- * arquitectura web. Sin "Inicio" (el logo ya lleva a la home) ni
- * "Personalizador" (cada producto abre su configurador).
+ * "Colección" abre un panel con las categorías de la arquitectura web. Cada
+ * silo muestra sus subcategorías; si no tiene (p. ej. Billeteras mujer), muestra
+ * sus modelos para que el menú no quede vacío. Sin "Inicio" (el logo ya lleva a
+ * la home) ni "Personalizador" (cada producto abre su configurador).
  */
-const COLLECTION_GROUPS = SILOS.map((silo) => ({
-  href: routePath(silo),
-  label: silo.label,
-  links: childrenOf(silo).map((sub) => ({
-    href: routePath(sub),
-    label: sub.label,
-  })),
-}));
-
-const NAV: NavItem[] = [
-  { href: "/coleccion", label: "Colección", groups: COLLECTION_GROUPS },
-  { href: "/artesania", label: "Artesanía" },
-  { href: "/sobre-kushtal", label: "Sobre Kushtal" },
-];
+async function collectionGroups() {
+  return Promise.all(
+    SILOS.map(async (silo) => {
+      const subs = childrenOf(silo);
+      const links =
+        subs.length > 0
+          ? subs.map((sub) => ({ href: routePath(sub), label: sub.label }))
+          : (await getCatalog(silo.filter).catch(() => [])).map((p) => ({
+              href: `/personalizar/${p.slug}`,
+              label: p.name,
+            }));
+      return { href: routePath(silo), label: silo.label, links };
+    }),
+  );
+}
 
 export async function Header() {
-  const [count, user] = await Promise.all([
+  const [count, groups] = await Promise.all([
     getCartCount().catch(() => 0),
-    getCurrentUser().catch(() => null),
+    collectionGroups(),
   ]);
+
+  const NAV: NavItem[] = [
+    { href: "/coleccion", label: "Colección", groups },
+    { href: "/artesania", label: "Artesanía" },
+    { href: "/sobre-kushtal", label: "Sobre Kushtal" },
+  ];
 
   return (
     <>
@@ -89,8 +97,8 @@ export async function Header() {
             </Link>
 
             <Link
-              href={user ? "/cuenta" : "/ingresar"}
-              aria-label={user ? "Mi cuenta" : "Ingresar"}
+              href="/cuenta"
+              aria-label="Mis pedidos"
               className="flex h-8 w-8 items-center justify-center rounded-full bg-anil text-algodon transition-transform hover:scale-105"
             >
               <User size={15} strokeWidth={1.8} />

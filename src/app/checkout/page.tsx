@@ -5,12 +5,16 @@ import { redirect } from "next/navigation";
 import { ArrowLeft, Hand, Leaf, LifeBuoy } from "lucide-react";
 
 import { CheckoutForm } from "@/components/checkout/checkout-form";
+import {
+  CheckoutShippingProvider,
+  SummaryShippingRow,
+  SummaryTotal,
+} from "@/components/checkout/checkout-shipping";
 import { Badge } from "@/components/ui/badge";
 import { getCart } from "@/lib/db/cart";
 import { formatPrice, formatPriceUSD } from "@/lib/format";
 import { isStripeEnabled } from "@/lib/stripe";
-import { createClient, getCurrentUser } from "@/lib/supabase/server";
-import type { ShippingAddress } from "@/lib/types";
+import { getSavedAddress } from "@/lib/demo-session";
 
 export const metadata: Metadata = {
   title: "Pago Seguro",
@@ -33,7 +37,7 @@ const PROMISES = [
   {
     icon: LifeBuoy,
     title: "Atención Personalizada Posventa",
-    body: "1 año de garantía en costuras y herrajes, y atención por WhatsApp o correo.",
+    body: "30 días de garantía en costuras y herrajes, y atención por WhatsApp o correo.",
   },
 ];
 
@@ -44,31 +48,20 @@ export default async function CheckoutPage() {
     redirect("/bolsa");
   }
 
-  const user = await getCurrentUser().catch(() => null);
-  let defaults: Partial<Record<string, string>> = {};
-
-  if (user) {
-    const supabase = await createClient();
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name, phone, default_address")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    const address = profile?.default_address as ShippingAddress | null;
-    const [first, ...rest] = (profile?.full_name ?? "").split(" ");
-
-    defaults = {
-      email: user.email ?? "",
-      first_name: address?.first_name ?? first ?? "",
-      last_name: address?.last_name ?? rest.join(" "),
-      address: address?.address ?? "",
-      city: address?.city ?? "",
-      department: address?.department ?? "San Salvador",
-      postal_code: address?.postal_code ?? "",
-      phone: address?.phone ?? profile?.phone ?? "",
-    };
-  }
+  // Demo: datos de envío guardados en este navegador en un pedido anterior.
+  const address = await getSavedAddress();
+  const defaults: Partial<Record<string, string>> = address
+    ? {
+        email: address.email,
+        first_name: address.first_name,
+        last_name: address.last_name,
+        address: address.address,
+        city: address.city,
+        department: address.department ?? "San Salvador",
+        postal_code: address.postal_code,
+        phone: address.phone,
+      }
+    : {};
 
   return (
     <div className="canvas py-8 lg:py-12">
@@ -90,6 +83,7 @@ export default async function CheckoutPage() {
         </div>
       </div>
 
+      <CheckoutShippingProvider subtotalCents={cart.subtotal_cents}>
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-10">
         <CheckoutForm
           subtotalCents={cart.subtotal_cents}
@@ -173,23 +167,20 @@ export default async function CheckoutPage() {
                 <dt className="text-ink-muted">Grabado de monograma</dt>
                 <dd className="text-torogoz-ink">Incluido</dd>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-ink-muted">Envío</dt>
-                <dd className="text-ink-muted">Según el tipo de envío</dd>
-              </div>
+              <SummaryShippingRow />
             </dl>
 
             <div className="mt-5 flex items-end justify-between gap-4 border-t border-outline-variant/60 pt-5">
               <div>
                 <p className="font-display text-xl font-semibold text-piedra">
-                  Subtotal del pedido
+                  Total del pedido
                 </p>
                 <p className="mt-0.5 text-[12px] text-ink-muted">
-                  Precios en dólares, IVA incluido. El envío se suma al confirmar.
+                  Precios en dólares, IVA y envío incluidos.
                 </p>
               </div>
               <p className="font-display text-[26px] leading-8 font-semibold text-piedra tabular-nums">
-                {formatPriceUSD(cart.total_cents)}
+                <SummaryTotal />
               </p>
             </div>
 
@@ -220,6 +211,7 @@ export default async function CheckoutPage() {
           </div>
         </aside>
       </div>
+      </CheckoutShippingProvider>
     </div>
   );
 }

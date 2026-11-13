@@ -6,10 +6,8 @@ import {
   AlertCircle,
   Banknote,
   CreditCard,
-  Landmark,
   Loader2,
   Lock,
-  Smartphone,
 } from "lucide-react";
 
 import { placeOrder, type CheckoutState } from "@/app/actions/checkout";
@@ -18,36 +16,24 @@ import { Field, Input, Select } from "@/components/ui/field";
 import { cn, formatPrice } from "@/lib/format";
 import { shippingCostCents } from "@/lib/pricing";
 import { SHIPPING_OPTIONS, SV_DEPARTMENTS } from "@/lib/types";
+import { useCheckoutShipping } from "./checkout-shipping";
 
 /**
- * Las pestañas son las del diseño de Stitch. Tarjeta, Apple Pay y Google Pay
- * se cobran en la pasarela de Stripe (que muestra las billeteras digitales
- * según el dispositivo); PayPal y transferencia se coordinan por correo.
+ * Solo tarjeta (cobrada en la pasarela de Stripe) y PayPal (se coordina
+ * por correo).
  */
 const PAYMENT_TABS = [
   {
     code: "card",
     label: "Tarjeta",
     icon: CreditCard,
-    note: "Visa, Mastercard o American Express, en la pasarela cifrada de Stripe.",
-  },
-  {
-    code: "wallet",
-    label: "Apple Pay / G Pay",
-    icon: Smartphone,
-    note: "Si tu dispositivo lo admite, Stripe te mostrará Apple Pay o Google Pay al pagar.",
+    note: "Al confirmar te llevamos a la pasarela cifrada para ingresar tu tarjeta. Sus datos nunca pasan por nuestros servidores.",
   },
   {
     code: "paypal",
     label: "PayPal",
     icon: Banknote,
     note: "Registramos tu pedido y te enviamos el enlace de PayPal a tu correo en menos de 24 horas.",
-  },
-  {
-    code: "transfer",
-    label: "Transferencia",
-    icon: Landmark,
-    note: "Te enviamos los datos de nuestra cuenta bancaria en El Salvador. Tu pieza entra al taller cuando confirmamos el pago.",
   },
 ];
 
@@ -66,7 +52,7 @@ export function CheckoutForm({
   );
   // Tras un error, la action devuelve lo enviado para no vaciar los campos.
   const values = { ...defaults, ...state.values };
-  const [shipping, setShipping] = useState("standard");
+  const { shipping, setShipping } = useCheckoutShipping();
   const [payment, setPayment] = useState("card");
 
   return (
@@ -300,7 +286,7 @@ export function CheckoutForm({
           </h2>
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-2">
           {PAYMENT_TABS.map((tab) => {
             const isActive = payment === tab.code;
             return (
@@ -323,44 +309,39 @@ export function CheckoutForm({
           })}
         </div>
 
-        <p className="mt-4 text-[13px] leading-5 text-ink-muted">
-          {PAYMENT_TABS.find((t) => t.code === payment)?.note}
-        </p>
-
-        <div className="mt-4 rounded-lg bg-surface-container p-5">
-          {stripeEnabled ? (
-            <>
-              <p className="flex items-center gap-2 font-display text-[17px] font-semibold text-piedra">
-                <Lock size={15} strokeWidth={1.8} className="text-torogoz" />
-                Pago seguro con Stripe
+        {/* Un solo bloque limpio para el cliente: sin campos de tarjeta
+            (se llenan en la pasarela) ni detalles técnicos. */}
+        <div className="mt-4 flex items-start gap-3 rounded-lg bg-surface-container p-4">
+          <Lock
+            size={15}
+            strokeWidth={1.8}
+            className="mt-0.5 shrink-0 text-torogoz"
+          />
+          <div className="min-w-0">
+            <p className="text-[13px] leading-5 text-ink-muted">
+              {PAYMENT_TABS.find((t) => t.code === payment)?.note}
+            </p>
+            {payment === "card" && (
+              <p className="mt-2 flex flex-wrap gap-1.5">
+                {["Visa", "Mastercard", "Amex"].map((brand) => (
+                  <span
+                    key={brand}
+                    className="rounded-xs border border-outline-variant bg-surface-lowest px-2 py-0.5 text-[10px] font-semibold tracking-wide text-piedra"
+                  >
+                    {brand}
+                  </span>
+                ))}
               </p>
-              <p className="mt-2 text-[13px] leading-5 text-ink-muted">
-                Al confirmar te llevamos a la pasarela cifrada de Stripe. Los
-                datos de tu tarjeta nunca pasan por nuestros servidores.
-              </p>
-              <p className="mt-3 rounded-sm bg-surface-high px-3 py-2 font-mono text-[11px] text-ink-muted">
-                Modo prueba: 4242 4242 4242 4242 · cualquier fecha futura · CVC
-                123
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="flex items-center gap-2 font-display text-[17px] font-semibold text-piedra">
-                <Lock size={15} strokeWidth={1.8} className="text-cafe" />
-                Pasarela en modo simulado
-              </p>
-              <p className="mt-2 text-[13px] leading-5 text-ink-muted">
-                Todavía no hay claves de Stripe configuradas. El pedido se
-                registrará igual y verás la confirmación completa, pero sin
-                cobro real. Agrega{" "}
-                <code className="rounded bg-surface-high px-1.5 py-0.5 text-[11px]">
-                  STRIPE_SECRET_KEY
-                </code>{" "}
-                para activar el cobro de prueba.
-              </p>
-            </>
-          )}
+            )}
+          </div>
         </div>
+
+        {/* Aviso discreto mientras no haya pasarela real configurada. */}
+        {!stripeEnabled && payment === "card" && (
+          <p className="mt-3 text-center text-[11px] text-outline">
+            Tienda en modo demostración · no se realiza ningún cobro real
+          </p>
+        )}
       </section>
 
       <SubmitButton subtotalCents={subtotalCents} shipping={shipping} />

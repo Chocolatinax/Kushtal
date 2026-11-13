@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getRememberedOrders } from "@/lib/demo-session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/supabase/server";
 import type { Order, OrderItem } from "@/lib/types";
@@ -49,11 +50,15 @@ export async function getOrderByNumber(
   };
 }
 
-/** Los pedidos del usuario logueado, más recientes primero. */
+/**
+ * Demo: los pedidos confirmados en este navegador (guardados en cookie con
+ * su access_token), más recientes primero.
+ */
 export async function getMyOrders(): Promise<Order[]> {
-  const user = await getCurrentUser();
-  if (!user) return [];
+  const remembered = await getRememberedOrders();
+  if (remembered.length === 0) return [];
 
+  const tokens = new Map(remembered.map((o) => [o.number, o.token]));
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -67,17 +72,21 @@ export async function getMyOrders(): Promise<Order[]> {
          details, unit_price_cents, quantity
        )`,
     )
-    .eq("user_id", user.id)
+    .in("order_number", [...tokens.keys()])
     .order("created_at", { ascending: false });
 
   if (error || !data) return [];
 
-  return data.map((row) => {
-    const { order_items, ...order } = row as unknown as Order & {
-      order_items: OrderItem[];
-    };
-    return { ...order, items: order_items ?? [] };
-  });
+  return data
+    .map((row) => {
+      const { order_items, ...order } = row as unknown as Order & {
+        order_items: OrderItem[];
+      };
+      return { ...order, items: order_items ?? [] };
+    })
+    // Solo los que coinciden con su token: una cookie editada a mano no
+    // puede traer pedidos ajenos.
+    .filter((order) => tokens.get(order.order_number) === order.access_token);
 }
 
 export const STATUS_LABELS: Record<string, { label: string; note: string }> = {

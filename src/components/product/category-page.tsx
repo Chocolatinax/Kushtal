@@ -138,7 +138,7 @@ export async function CategoryPage({ route }: { route: CatalogRoute }) {
             </div>
             <p className="mt-6 text-[13px] text-ink-muted">
               {products.length} {products.length === 1 ? "modelo" : "modelos"}
-              {route.preset?.rfid && " · el bloqueo RFID ya viene activado al abrirlos"}
+              {route.preset?.rfid && " · con bloqueo RFID incluido"}
             </p>
           </>
         )}

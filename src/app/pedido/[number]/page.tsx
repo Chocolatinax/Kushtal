@@ -94,35 +94,6 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
         </div>
       </div>
 
-      {/* ------------------------------------------- Ritual */}
-      <section className="mt-16">
-        <Eyebrow>Qué sigue en el taller</Eyebrow>
-        <ol className="mt-5 grid gap-4 md:grid-cols-4">
-          {TIMELINE.map((step, index) => (
-            <li
-              key={step.title}
-              className="rounded-xl border border-outline-variant/70 bg-surface-lowest p-5"
-            >
-              <div className="flex items-center justify-between">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-surface-high text-cafe">
-                  <step.icon size={16} strokeWidth={1.7} />
-                </span>
-                <span className="font-display text-lg font-semibold text-outline-variant">
-                  0{index + 1}
-                </span>
-              </div>
-
-              <p className="mt-4 font-display text-[17px] leading-6 font-semibold text-piedra">
-                {step.title}
-              </p>
-              <p className="mt-1.5 text-[12px] leading-4 text-ink-muted">
-                {step.body}
-              </p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
       {/* ------------------------------------------- Detalle */}
       <div className="mt-14 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-12">
         <section>
@@ -262,11 +233,44 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
             </p>
           </div>
 
+          <ButtonLink href="/cuenta" className="w-full">
+            Ver mis pedidos
+          </ButtonLink>
           <ButtonLink href="/coleccion" variant="outline" className="w-full">
             Seguir explorando la colección
           </ButtonLink>
         </aside>
       </div>
+
+      {/* ------------------------------------------- Ritual (al final, para
+          no cortar la revisión del pedido) */}
+      <section className="mt-16">
+        <Eyebrow>Qué sigue en el taller</Eyebrow>
+        <ol className="mt-5 grid gap-4 md:grid-cols-4">
+          {TIMELINE.map((step, index) => (
+            <li
+              key={step.title}
+              className="rounded-xl border border-outline-variant/70 bg-surface-lowest p-5"
+            >
+              <div className="flex items-center justify-between">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-surface-high text-cafe">
+                  <step.icon size={16} strokeWidth={1.7} />
+                </span>
+                <span className="font-display text-lg font-semibold text-outline-variant">
+                  0{index + 1}
+                </span>
+              </div>
+
+              <p className="mt-4 font-display text-[17px] leading-6 font-semibold text-piedra">
+                {step.title}
+              </p>
+              <p className="mt-1.5 text-[12px] leading-4 text-ink-muted">
+                {step.body}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </section>
     </div>
   );
 }
