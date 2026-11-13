@@ -240,7 +240,7 @@ export default async function GiftsPage() {
       </section>
 
       {/* ------------------------------------------- Modelos */}
-      <section id="modelos" className="mt-20 scroll-mt-28">
+      <section id="modelos" className="mt-20 scroll-mt-32">
         <Eyebrow>Elige el regalo</Eyebrow>
         <h2 className="mt-2 font-display text-[26px] leading-9 font-semibold text-piedra md:text-[32px]">
           Todos los modelos, listos para regalar

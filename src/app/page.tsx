@@ -46,11 +46,11 @@ const ORGANIZATION_LD = {
 const SILO_CARDS: Record<string, { image: string; blurb: string }> = {
   "billeteras-hombre": {
     image: "/configurador/modelos/bifold-signature-atelier/chocolate.jpg",
-    blurb: "Bifold clásica, tarjeteros slim y porta pasaporte para el día a día.",
+    blurb: "La Bifold Signature: seis ranuras y perfil delgado para el día a día.",
   },
   "billeteras-mujer": {
     image: "/configurador/modelos/billetera-continental-roma/caramelo.jpg",
-    blurb: "Continental larga, con cremallera y tarjeteros compactos.",
+    blurb: "La Continental Roma y la Billetera con Cremallera, amplias y elegantes.",
   },
   tarjeteros: {
     image: "/configurador/modelos/tarjetero-atelier-no-01/indigo.jpg",

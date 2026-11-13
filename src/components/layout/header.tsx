@@ -4,6 +4,7 @@ import { Search, ShoppingBag, User } from "lucide-react";
 import { childrenOf, routePath, SILOS } from "@/lib/catalog-routes";
 import { getCartCount } from "@/lib/db/cart";
 import { getCatalog } from "@/lib/db/products";
+import { AnnouncementBar } from "./announcement-bar";
 import { CollectionMenu } from "./collection-menu";
 import { MobileNav, type NavItem } from "./mobile-nav";
 
@@ -44,6 +45,9 @@ export async function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-outline-variant/60 bg-algodon/95 backdrop-blur-sm">
+        {/* Dentro del header fijo: así se ve siempre, aunque el navegador
+            recuerde el scroll al recargar. */}
+        <AnnouncementBar />
         <div className="canvas flex h-16 items-center gap-8">
           <MobileNav items={NAV} />
 

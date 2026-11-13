@@ -91,7 +91,7 @@ export default async function CheckoutPage() {
           defaults={defaults}
         />
 
-        <aside className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
+        <aside className="flex flex-col gap-5 lg:sticky lg:top-32 lg:self-start">
           <div className="rounded-xl border border-outline-variant/70 bg-surface-lowest p-6">
             <header>
               <h2 className="font-display text-[26px] font-semibold text-piedra">

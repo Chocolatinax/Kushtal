@@ -120,7 +120,7 @@ export function CatalogFilters({
             onBlur={() => query.trim() !== current.q && setParam("q", query.trim())}
             placeholder="Buscar billeteras o tarjeteros"
             aria-label="Buscar en la colección"
-            className="w-full scroll-mt-28 rounded-full border border-outline-variant bg-surface-container py-2 pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-muted/70 focus:border-anil focus:outline-none"
+            className="w-full scroll-mt-32 rounded-full border border-outline-variant bg-surface-container py-2 pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-muted/70 focus:border-anil focus:outline-none"
           />
         </form>
       </div>

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 
-import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { SITE_URL } from "@/lib/site";
@@ -52,7 +51,6 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${playfair.variable} ${jakarta.variable}`}>
       <body className="flex min-h-dvh flex-col antialiased">
-        <AnnouncementBar />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

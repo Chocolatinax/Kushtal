@@ -460,7 +460,7 @@ export default function CraftPage() {
       {/* ------------------------------------------- 03 · Cuidado */}
       <section className="bg-surface-high/40 py-16 lg:py-24">
         <div className="canvas grid items-start gap-10 lg:grid-cols-12 lg:gap-6">
-          <div className="flex flex-col gap-4 lg:sticky lg:top-28 lg:col-span-5">
+          <div className="flex flex-col gap-4 lg:sticky lg:top-36 lg:col-span-5">
             <p className="eyebrow tracking-[0.2em] text-cafe">
               Sección 03 / Cuidado
             </p>

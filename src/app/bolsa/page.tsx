@@ -140,7 +140,7 @@ export default async function CartPage() {
         </div>
 
         {/* ------------------------------------------- Resumen */}
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        <aside className="lg:sticky lg:top-32 lg:self-start">
           <div className="rounded-xl border border-outline-variant/70 bg-surface-lowest p-6">
             <h2 className="font-display text-[22px] font-semibold text-piedra">
               Resumen del pedido

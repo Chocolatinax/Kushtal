@@ -196,7 +196,7 @@ export function Configurator({
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-14">
       {/* ------------------------------------------- Lienzo */}
-      <div className="lg:sticky lg:top-24 lg:self-start">
+      <div className="lg:sticky lg:top-32 lg:self-start">
         <PreviewPane product={product} images={images} state={preview} />
       </div>
 
@@ -358,7 +358,7 @@ function OptionGroupBlock({
   onChange: (value: string) => void;
 }) {
   return (
-    <fieldset id={`grupo-${group.code}`} className="scroll-mt-28">
+    <fieldset id={`grupo-${group.code}`} className="scroll-mt-32">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <legend className="font-display text-[22px] leading-7 font-semibold text-piedra">
           {group.label}
@@ -405,7 +405,7 @@ function AccessoriesBlock({
   onToggle: (code: string, on: boolean) => void;
 }) {
   return (
-    <fieldset id="grupo-accesorios" className="scroll-mt-28">
+    <fieldset id="grupo-accesorios" className="scroll-mt-32">
       <legend className="font-display text-[22px] leading-7 font-semibold text-piedra">
         Accesorios
         <span className="ml-2 align-middle text-[11px] font-sans font-semibold uppercase tracking-wider text-ink-muted">
@@ -484,7 +484,7 @@ function MobilePreviewBar({
   const main = mainImageFor(product, images, state.toneCode);
 
   return (
-    <div className="sticky top-16 z-30 -mx-5 -mt-6 border-y border-outline-variant/60 bg-algodon/95 px-5 py-2.5 backdrop-blur-sm md:-mx-8 md:px-8 lg:hidden">
+    <div className="sticky top-[101px] z-30 -mx-5 -mt-6 border-y border-outline-variant/60 bg-algodon/95 px-5 py-2.5 backdrop-blur-sm md:-mx-8 md:px-8 lg:hidden">
       <div className="flex items-center gap-3">
         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-outline-variant/70 bg-surface-container">
           {main.src && (
