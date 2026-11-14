@@ -82,6 +82,58 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
       },
     ],
   },
+  {
+    segments: ["billeteras-hombre", "minimalistas-slim"],
+    label: "Minimalistas slim",
+    h1: "Billeteras minimalistas y slim para hombre",
+    title: "Billetera compacta para hombre, minimalista y slim",
+    description:
+      "Billeteras compactas para hombre: perfil delgado para el bolsillo delantero, en cuero personalizable desde $50. Envíos a todo El Salvador.",
+    intro:
+      "Para quien lleva solo lo esencial: modelos de perfil extraplano que caben en el bolsillo delantero sin abultar. Eliges el color, la piel y el grabado.",
+    keyword: "billetera compacta",
+    secondary: ["billetera hombre compacta"],
+    // Arquitectura: /billeteras-hombre/minimalistas-slim/ → modelos slim para hombre.
+    filter: { tags: ["hombre", "slim"] },
+    image: "/categorias/minimalistas-slim.webp",
+    faq: [
+      {
+        q: "¿Qué billetera compacta para hombre cabe en el bolsillo delantero?",
+        a: "El Tarjetero No. 01: perfil extraplano de 4 ranuras con bolsillo central para billetes doblados. Si necesitas más espacio, el Plegable Slim guarda hasta 8 tarjetas.",
+      },
+    ],
+  },
+  {
+    segments: ["billeteras-hombre", "cuero-personalizadas"],
+    label: "Cuero personalizadas",
+    h1: "Billeteras de cuero personalizadas para hombre",
+    title: "Billetera para hombre personalizada y grabada en cuero",
+    description:
+      "Billeteras para hombre en cuero genuino, personalizadas y grabadas con tus iniciales desde $50. Hechas a mano en El Salvador.",
+    intro:
+      "Diseña tu billetera de cuero: elige entre vacuno liso, grano entero, curtido vegetal o Crazy Horse, y graba tus iniciales en golpe seco o lámina de oro.",
+    keyword: "billetera para hombre personalizada",
+    secondary: [
+      "billetera hombre personalizada",
+      "billetera hombre grabada",
+      "billetera cuero genuino hombre",
+      "billetera cuero vacuno hombre",
+    ],
+    filter: { slugs: ["bifold-signature-atelier"] },
+    // Entra directo al monograma del configurador.
+    anchor: "grupo-grabado",
+    image: "/categorias/hombre-cuero-personalizadas.webp",
+    faq: [
+      {
+        q: "¿La billetera es de cuero genuino?",
+        a: "Sí. Todas son de cuero genuino: el vacuno liso va incluido y puedes cambiarlo por piel de grano entero, curtido vegetal o Crazy Horse.",
+      },
+      {
+        q: "¿Cuánto cuesta grabar la billetera?",
+        a: "El grabado de hasta 12 caracteres en golpe seco va incluido. La lámina de oro suma $8.",
+      },
+    ],
+  },
   /* ------------------------------------------------ Silo: mujer */
   {
     segments: ["billeteras-mujer"],
@@ -105,6 +157,27 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
       {
         q: "¿Puedo regalarla con su nombre grabado?",
         a: "Sí. Escribe el nombre o las iniciales en el configurador y elige la caja de regalo rígida (+$10).",
+      },
+    ],
+  },
+  {
+    segments: ["billeteras-mujer", "cuero-personalizadas"],
+    label: "Cuero personalizadas",
+    h1: "Billeteras de cuero personalizadas para mujer",
+    title: "Billetera para mujer personalizada en cuero",
+    description:
+      "Billeteras para mujer en cuero vacuno, personalizadas con su nombre o iniciales desde $50. Hechas a mano en El Salvador.",
+    intro:
+      "Billeteras para dama que diseñas a tu gusto: color, tipo de cuero, forro y un grabado con su nombre o iniciales.",
+    keyword: "billetera mujer personalizada",
+    secondary: ["billetera cuero vacuno mujer"],
+    filter: { slugs: ["billetera-continental-roma", "billetera-zip-accordion"] },
+    anchor: "grupo-grabado",
+    image: "/categorias/mujer-cuero-personalizadas.webp",
+    faq: [
+      {
+        q: "¿Puedo grabar un nombre completo?",
+        a: "Sí, hasta 12 caracteres entre letras, números y los signos . & ' -. El grabado en golpe seco va incluido.",
       },
     ],
   },
@@ -188,6 +261,27 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
       {
         q: "¿El bloqueo RFID hace más grueso el tarjetero?",
         a: "No de forma notable: es una capa delgada dentro del forro.",
+      },
+    ],
+  },
+  {
+    segments: ["tarjeteros", "cuero-grabados"],
+    label: "Cuero grabados",
+    h1: "Tarjeteros de cuero grabados y personalizables",
+    title: "Tarjetero personalizable de cuero con grabado",
+    description:
+      "Tarjeteros de cuero personalizables con grabado de iniciales o nombre desde $50. Hechos a mano en El Salvador.",
+    intro:
+      "Elige tu tarjetero y grábalo con iniciales o un nombre: en golpe seco va incluido, o en lámina de oro para un acabado dorado.",
+    keyword: "tarjetero personalizable",
+    secondary: [],
+    filter: { slugs: ["tarjetero-atelier-no-01", "tarjetero-plegable-slim"] },
+    anchor: "grupo-grabado",
+    image: "/categorias/tarjeteros-cuero-grabados.webp",
+    faq: [
+      {
+        q: "¿Dónde va el grabado del tarjetero?",
+        a: "En la cara interior, en versalitas. Puedes elegir golpe seco (incluido) o lámina de oro (+$8).",
       },
     ],
   },
