@@ -32,6 +32,7 @@ const KEPT_FIELDS = [
   "city",
   "phone",
   "postal_code",
+  "marketing_opt_in",
 ] as const;
 
 const checkoutSchema = z.object({
@@ -56,6 +57,11 @@ const checkoutSchema = z.object({
     .enum(["card", "paypal"])
     .default("card"),
   save_info: z.coerce.boolean().default(false),
+  // Casilla opcional y sin marcar: solo hay consentimiento si viene "true".
+  marketing_opt_in: z
+    .string()
+    .optional()
+    .transform((v) => v === "true"),
 });
 
 export async function placeOrder(
@@ -123,7 +129,11 @@ async function submitOrder(formData: FormData): Promise<CheckoutState> {
       shipping_cents: shipping,
       total_cents: total,
       shipping_method: input.shipping_method,
-      shipping_address: shippingAddress,
+      // El consentimiento de promociones viaja con los datos del pedido.
+      shipping_address: {
+        ...shippingAddress,
+        marketing_opt_in: input.marketing_opt_in,
+      },
     })
     .select("id, order_number, access_token")
     .single();

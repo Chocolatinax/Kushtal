@@ -137,6 +137,8 @@ export interface ShippingAddress {
   postal_code: string;
   phone: string;
   country: string;
+  /** Si aceptó recibir novedades y promociones en el checkout. */
+  marketing_opt_in?: boolean;
 }
 
 /** Los 14 departamentos de El Salvador, para el formulario de envío. */

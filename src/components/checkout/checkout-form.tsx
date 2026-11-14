@@ -204,10 +204,26 @@ export function CheckoutForm({
             <input
               type="checkbox"
               name="save_info"
+              autoComplete="off"
               value="true"
               className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-xs border-[1.5px] border-piedra/35 accent-torogoz"
             />
             Guardar estos datos para mis próximos pedidos.
+          </label>
+
+          <label className="flex items-start gap-2.5 text-[14px] leading-5 sm:text-[13px] text-ink-muted">
+            <input
+              // Sin marcar por defecto. Si hubo un error, la key lo vuelve a
+              // montar con lo que la persona eligió.
+              key={values.marketing_opt_in ?? "off"}
+              type="checkbox"
+              name="marketing_opt_in"
+              autoComplete="off"
+              value="true"
+              defaultChecked={values.marketing_opt_in === "true"}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-xs border-[1.5px] border-piedra/35 accent-torogoz"
+            />
+            Quiero recibir novedades y promociones.
           </label>
         </div>
       </section>
