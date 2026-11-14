@@ -61,7 +61,7 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
     h1: "Billeteras con bloqueo RFID para hombre",
     title: "Billetera con bloqueo RFID para hombre",
     description:
-      "Billeteras de cuero para hombre con bloqueo RFID y NFC que protegen tus tarjetas contactless. Personalizables desde $50 en El Salvador.",
+      "Billeteras de cuero para hombre con bloqueo RFID y NFC que protegen tus tarjetas contactless. Personalizables desde $58 en El Salvador.",
     intro:
       "La versión con bloqueo RFID de nuestra billetera de caballero: un forro que impide la lectura sin contacto (RFID y NFC) de tus tarjetas. Viene incluido de fábrica en estos modelos.",
     keyword: "billetera con bloqueo rfid",
@@ -176,7 +176,7 @@ export const CATALOG_ROUTES: CatalogRoute[] = [
     h1: "Tarjeteros con bloqueo RFID anticlonación",
     title: "Tarjetero con bloqueo RFID anticlonación",
     description:
-      "Tarjeteros de cuero con bloqueo RFID y NFC para proteger tus tarjetas de la clonación. Desde $50.",
+      "Tarjeteros de cuero con bloqueo RFID y NFC para proteger tus tarjetas de la clonación. Desde $58.",
     intro:
       "Protege tus tarjetas contactless de la clonación. Estos tarjeteros vienen con el bloqueo RFID incluido de fábrica.",
     keyword: "tarjetero con bloqueo rfid",

@@ -44,7 +44,7 @@ export default async function AccountPage() {
           <h1 className="mt-1 font-display text-[28px] leading-9 font-semibold text-piedra md:text-[34px]">
             {name}
           </h1>
-          <p className="mt-0.5 text-[13px] text-ink-muted">{email}</p>
+          <p className="mt-0.5 text-[14px] sm:text-[13px] text-ink-muted">{email}</p>
         </div>
       </header>
 
@@ -61,7 +61,7 @@ export default async function AccountPage() {
             <p className="mt-4 font-display text-xl font-semibold text-piedra">
               Todavía no tienes pedidos
             </p>
-            <p className="mt-2 text-[13px] text-ink-muted">
+            <p className="mt-2 text-[14px] sm:text-[13px] text-ink-muted">
               Cuando configures tu primera pieza, aquí podrás seguir su paso
               por el taller.
             </p>
@@ -91,7 +91,7 @@ export default async function AccountPage() {
                           {status.label}
                         </Badge>
                       </div>
-                      <p className="mt-1 text-[13px] text-ink-muted">
+                      <p className="mt-1 text-[14px] sm:text-[13px] text-ink-muted">
                         {formatDate(order.created_at)} ·{" "}
                         {order.items.length}{" "}
                         {order.items.length === 1 ? "pieza" : "piezas"}
@@ -104,7 +104,7 @@ export default async function AccountPage() {
                       </p>
                       <Link
                         href={`/pedido/${order.order_number}?t=${order.access_token}`}
-                        className="mt-1 inline-block text-[13px] font-semibold text-anil link-underline"
+                        className="mt-1 inline-block text-[14px] sm:text-[13px] font-semibold text-anil link-underline"
                       >
                         Ver detalle
                       </Link>
@@ -123,7 +123,7 @@ export default async function AccountPage() {
                             className="h-12 w-10 rounded-sm object-cover"
                           />
                         )}
-                        <span className="text-[13px] text-ink-muted">
+                        <span className="text-[14px] sm:text-[13px] text-ink-muted">
                           {item.product_name}
                           {item.quantity > 1 && ` ×${item.quantity}`}
                         </span>

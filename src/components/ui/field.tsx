@@ -4,7 +4,7 @@ import { cn } from "@/lib/format";
 
 const control =
   "w-full rounded-sm border border-outline-variant bg-surface-container " +
-  "px-4 py-3 text-[15px] text-ink placeholder:text-ink-muted/60 " +
+  "px-4 py-3 text-base sm:text-[15px] text-ink placeholder:text-ink-placeholder " +
   "transition-[border-color,box-shadow] duration-200 " +
   "focus:border-anil focus:border-[1.5px] focus:outline-none " +
   "focus:shadow-[0_0_0_3px_rgb(30_43_79_/_0.08)] " +
@@ -28,9 +28,9 @@ export function Field({
       <label className="label-pill text-ink">{label}</label>
       {children}
       {error ? (
-        <p className="text-[13px] text-danger-ink">{error}</p>
+        <p className="text-[14px] sm:text-[13px] text-danger-ink">{error}</p>
       ) : hint ? (
-        <p className="text-[13px] text-ink-muted">{hint}</p>
+        <p className="text-[14px] sm:text-[13px] text-ink-muted">{hint}</p>
       ) : null}
     </div>
   );

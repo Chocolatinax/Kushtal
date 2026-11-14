@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Hourglass, ShieldCheck } from "lucide-react";
+import { ArrowRight, Hourglass } from "lucide-react";
 
 import { CartLine } from "@/components/cart/cart-line";
 import { ProductCard } from "@/components/product/product-card";
@@ -9,7 +9,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { getCart } from "@/lib/db/cart";
 import { getFeaturedProducts } from "@/lib/db/products";
 import { formatPrice, formatPriceUSD } from "@/lib/format";
-import { qualifiesForFreeShipping } from "@/lib/pricing";
+import { qualifiesForFreeShipping, shippingCostCents } from "@/lib/pricing";
 import { FREE_SHIPPING_THRESHOLD_CENTS, type Cart } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -38,6 +38,7 @@ export default async function CartPage() {
   const suggestions = await getFeaturedProducts(3).catch(() => []);
   const freeShipping = qualifiesForFreeShipping(cart.subtotal_cents);
   const missingForFree = cart.free_shipping_threshold_cents - cart.subtotal_cents;
+  const standardShipping = shippingCostCents(cart.subtotal_cents, "standard");
 
   if (cart.items.length === 0) {
     return (
@@ -46,7 +47,7 @@ export default async function CartPage() {
         <h1 className="mt-3 font-display text-[30px] leading-[38px] font-semibold text-piedra md:text-[40px]">
           Tu bolsa está vacía
         </h1>
-        <p className="mt-3 max-w-md text-[15px] leading-6 text-ink-muted">
+        <p className="mt-3 max-w-md text-base sm:text-[15px] leading-6 text-ink-muted">
           Todavía no has configurado ninguna pieza. Elige un modelo y hazlo
           tuyo: color, tipo de piel, forro, accesorios y monograma.
         </p>
@@ -86,17 +87,12 @@ export default async function CartPage() {
       <div className="mt-4 flex flex-wrap items-end justify-between gap-5">
         <h1 className="font-display text-[30px] leading-[38px] font-semibold text-piedra md:text-[40px] md:leading-[48px]">
           Tu Bolsa de Compra
-          <span className="ml-3 font-sans text-base font-normal text-ink-muted">
-            ({cart.item_count}{" "}
-            {cart.item_count === 1 ? "pieza artesanal" : "piezas artesanales"})
-          </span>
         </h1>
 
-        <p className="rounded-full bg-surface-high px-5 py-2.5 text-[13px] text-ink-muted">
+        <p className="rounded-full bg-surface-high px-5 py-2.5 text-[14px] sm:text-[13px] text-ink-muted">
           {freeShipping ? (
             <>
-              Tienes <strong className="text-anil">envío gratuito</strong> y
-              grabado de cortesía incluido
+              Tienes <strong className="text-anil">envío gratuito</strong>
             </>
           ) : (
             <>
@@ -110,7 +106,7 @@ export default async function CartPage() {
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-14">
         {/* ------------------------------------------- Líneas */}
-        <div>
+        <div className="min-w-0">
           <div className="rounded-xl border border-outline-variant/70 bg-surface-lowest px-6">
             {cart.items.map((item) => (
               <CartLine key={item.id} item={item} />
@@ -126,21 +122,21 @@ export default async function CartPage() {
               <p className="font-display text-lg font-semibold text-piedra">
                 Tiempo de confección artesanal estimado
               </p>
-              <p className="mt-1 text-[13px] leading-5 text-ink-muted">
+              <p className="mt-1 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                 Cada pieza personalizada se corta, estampa y cose pacientemente
                 a mano en nuestro taller. Envío programado en 4 a 6 días
                 hábiles.
               </p>
             </div>
 
-            <Badge tone="craft" className="shrink-0">
+            <Badge tone="craft" className="hidden shrink-0 sm:inline-flex">
               Hecha a mano
             </Badge>
           </div>
         </div>
 
         {/* ------------------------------------------- Resumen */}
-        <aside className="lg:sticky lg:top-32 lg:self-start">
+        <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
           <div className="rounded-xl border border-outline-variant/70 bg-surface-lowest p-6">
             <h2 className="font-display text-[22px] font-semibold text-piedra">
               Resumen del pedido
@@ -159,30 +155,34 @@ export default async function CartPage() {
                 <dd className="text-torogoz-ink">Incluido</dd>
               </div>
 
+              {/* Solo el costo: el detalle de tiempos y express se elige al pagar. */}
               <div className="flex justify-between">
-                <dt className="text-ink-muted">Envío</dt>
-                <dd className={freeShipping ? "text-torogoz-ink" : "text-ink-muted"}>
-                  {freeShipping ? "Gratis" : "Se calcula al pagar"}
+                <dt className="text-ink-muted">Envío estándar</dt>
+                <dd
+                  className={
+                    freeShipping
+                      ? "text-torogoz-ink"
+                      : "font-medium text-piedra tabular-nums"
+                  }
+                >
+                  {freeShipping ? "Gratis" : formatPrice(standardShipping)}
                 </dd>
               </div>
             </dl>
 
-            <div className="mt-5 flex items-end justify-between gap-4 border-t border-outline-variant/60 pt-5">
+            <div className="mt-5 flex items-baseline justify-between gap-4 border-t border-outline-variant/60 pt-5">
               <div>
-                <p className="font-display text-xl font-semibold text-piedra">
+                <p className="whitespace-nowrap font-display text-lg font-semibold text-piedra sm:text-xl">
                   Total estimado
                 </p>
-                <p className="mt-0.5 text-[12px] text-ink-muted">
-                  Precios en dólares, IVA incluido
-                </p>
               </div>
-              <p className="font-display text-[28px] leading-8 font-semibold text-piedra tabular-nums">
-                {formatPriceUSD(cart.total_cents)}
+              <p className="whitespace-nowrap font-display text-[24px] leading-8 font-semibold text-piedra tabular-nums sm:text-[28px]">
+                {formatPriceUSD(cart.subtotal_cents + standardShipping)}
               </p>
             </div>
 
             <ButtonLink href="/checkout" size="lg" className="mt-6 w-full">
-              Continuar al pago seguro
+              Continuar como invitado
               <ArrowRight size={15} strokeWidth={2} />
             </ButtonLink>
 
@@ -197,7 +197,7 @@ export default async function CartPage() {
               <Link
                 href="/checkout"
                 aria-label="Pagar con PayPal"
-                className="flex h-10 items-center justify-center rounded-full bg-[#FFC439] text-[13px] font-bold italic text-[#003087] transition-opacity hover:opacity-95"
+                className="flex h-10 items-center justify-center rounded-full bg-[#FFC439] text-[14px] sm:text-[13px] font-bold italic text-[#003087] transition-opacity hover:opacity-95"
               >
                 PayPal
               </Link>
@@ -210,12 +210,6 @@ export default async function CartPage() {
             >
               Seguir explorando
             </ButtonLink>
-
-            <p className="mt-5 flex items-start gap-2 text-[12px] leading-4 text-ink-muted">
-              <ShieldCheck size={14} strokeWidth={1.7} className="mt-px shrink-0 text-torogoz" />
-              Al confirmar tu pedido empezamos a cortar y coser tu pieza a
-              mano.
-            </p>
           </div>
         </aside>
       </div>
@@ -229,7 +223,7 @@ export default async function CartPage() {
                 También te podría gustar
               </h2>
             </div>
-            <p className="max-w-sm text-[13px] leading-5 text-ink-muted">
+            <p className="max-w-sm text-[14px] sm:text-[13px] leading-5 text-ink-muted">
               Otros modelos que también puedes personalizar desde $50.
             </p>
           </div>

@@ -32,6 +32,9 @@
 
   --color-ink: #2b2826;
   --color-ink-muted: #5a5551;
+  /* Placeholders: más claro que el texto real para no confundirse con un
+     dato ya escrito, pero ≥ 4.5:1 sobre surface-container (WCAG AA). */
+  --color-ink-placeholder: #736b64;
 
   --color-outline: #8d857d;
   --color-outline-variant: #d6cdc1;
@@ -80,6 +83,9 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overscroll-behavior-y: none;
+    /* Cuerpo de 16 px mínimo (legibilidad en celular). */
+    font-size: 1rem;
+    line-height: 1.5;
   }
 
   h1,
@@ -130,21 +136,35 @@
   }
 }
 
-/* Pre-encabezado en versalitas con tracking abierto */
+/* Pre-encabezado en versalitas con tracking abierto.
+   En celular (< 640 px) sube a 14 px: en las pruebas de usabilidad los
+   textos secundarios de 11–12 px casi no se leían. */
 @utility eyebrow {
-  font-size: 0.6875rem;
+  font-size: 0.875rem;
   font-weight: 700;
-  line-height: 0.875rem;
-  letter-spacing: 0.08em;
+  line-height: 1.25rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+
+  @media (width >= 640px) {
+    font-size: 0.6875rem;
+    line-height: 0.875rem;
+    letter-spacing: 0.08em;
+  }
 }
 
 @utility label-pill {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  line-height: 1rem;
-  letter-spacing: 0.05em;
+  line-height: 1.25rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+
+  @media (width >= 640px) {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.05em;
+  }
 }
 
 /* Subrayado animado de izquierda a derecha para botones ghost */

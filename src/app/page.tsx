@@ -126,7 +126,7 @@ export default async function HomePage() {
         <div className="canvas relative z-10 flex flex-col items-center py-16 text-center lg:py-24">
           <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-algodon/20 bg-algodon/15 px-4 py-1.5 backdrop-blur-md">
             <span className="h-1.5 w-1.5 rounded-full bg-cafe-container" />
-            <span className="text-[11px] font-semibold tracking-[0.25em] text-algodon uppercase">
+            <span className="text-[14px] sm:text-[11px] font-semibold tracking-[0.25em] text-algodon uppercase">
               Kushtal Atelier · Cuero de autor
             </span>
           </span>
@@ -141,7 +141,7 @@ export default async function HomePage() {
 
           <Link
             href="/coleccion"
-            className="group inline-flex items-center gap-2 rounded-full border border-algodon/60 px-8 py-3.5 text-[13px] font-semibold tracking-wider text-algodon uppercase backdrop-blur-sm transition-all duration-300 hover:border-algodon hover:bg-algodon/10"
+            className="group inline-flex items-center gap-2 rounded-full border border-algodon/60 px-8 py-3.5 text-[14px] sm:text-[13px] font-semibold tracking-wider text-algodon uppercase backdrop-blur-sm transition-all duration-300 hover:border-algodon hover:bg-algodon/10"
           >
             Explorar colección
             <ArrowRight
@@ -197,7 +197,7 @@ export default async function HomePage() {
                         {silo.h1}
                       </Link>
                     </h3>
-                    <p className="mt-1 text-[13px] leading-5 text-ink-muted">
+                    <p className="mt-1 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                       {card.blurb}
                     </p>
                     <ul className="mt-4 flex flex-wrap gap-2 border-t border-ceniza/60 pt-4">
@@ -205,7 +205,7 @@ export default async function HomePage() {
                         <li key={sub.label}>
                           <Link
                             href={routePath(sub)}
-                            className="inline-block rounded-full border border-outline-variant px-3 py-1 text-[12px] font-medium text-ink-muted transition-colors hover:border-anil hover:text-anil"
+                            className="inline-block rounded-full border border-outline-variant px-3 py-1 text-[14px] sm:text-[12px] font-medium text-ink-muted transition-colors hover:border-anil hover:text-anil"
                           >
                             {sub.label}
                           </Link>
@@ -262,7 +262,7 @@ export default async function HomePage() {
                 Paleta de cueros
               </h2>
             </div>
-            <p className="max-w-md text-[13px] leading-5 text-ink-muted">
+            <p className="max-w-md text-[14px] sm:text-[13px] leading-5 text-ink-muted">
               Cada tono madura con el uso y toma una pátina propia. Elige uno y
               mira cómo queda en un modelo real.
             </p>
@@ -279,7 +279,7 @@ export default async function HomePage() {
             <h2 className="font-display text-[28px] leading-9 font-normal tracking-tight text-piedra lg:text-[40px] lg:leading-[48px]">
               Cómo se da vida a tu pieza
             </h2>
-            <p className="mt-2 text-[15px] leading-[26px] text-ink-muted">
+            <p className="mt-2 text-base sm:text-[15px] leading-[26px] text-ink-muted">
               Del modelo al monograma: tú decides cada elemento y ves cuánto
               suma al precio antes de comprar.
             </p>
@@ -297,7 +297,7 @@ export default async function HomePage() {
                       className={
                         i === 1
                           ? "font-display text-[40px] text-cafe"
-                          : "font-display text-[40px] text-ceniza"
+                          : "font-display text-[40px] text-outline"
                       }
                     >
                       {step.n}
@@ -306,7 +306,7 @@ export default async function HomePage() {
                       className={
                         i === 1
                           ? "eyebrow tracking-widest text-cafe"
-                          : "eyebrow tracking-widest text-outline"
+                          : "eyebrow tracking-widest text-ink-muted"
                       }
                     >
                       {step.tag}
@@ -315,11 +315,11 @@ export default async function HomePage() {
                   <h3 className="mb-1 font-display text-[22px] leading-[30px] text-piedra">
                     {step.title}
                   </h3>
-                  <p className="mb-4 text-[13px] leading-relaxed text-ink-muted">
+                  <p className="mb-4 text-[14px] sm:text-[13px] leading-relaxed text-ink-muted">
                     {step.body}
                   </p>
                 </div>
-                <p className="flex items-center gap-2 rounded-lg border border-ceniza/50 bg-ceniza/40 p-2 text-[12px] text-piedra">
+                <p className="flex items-center gap-2 rounded-lg border border-ceniza/50 bg-ceniza/40 p-2 text-[14px] sm:text-[12px] text-piedra">
                   <step.icon size={18} strokeWidth={1.6} className="text-cafe" />
                   {step.meta}
                 </p>
@@ -330,7 +330,7 @@ export default async function HomePage() {
           <div className="mt-8 text-center">
             <Link
               href="/personalizar/bifold-signature-atelier"
-              className="inline-flex items-center gap-2 text-[13px] font-semibold tracking-wider text-anil uppercase transition-colors hover:text-cafe"
+              className="inline-flex items-center gap-2 text-[14px] sm:text-[13px] font-semibold tracking-wider text-anil uppercase transition-colors hover:text-cafe"
             >
               Abrir el configurador
               <ArrowUpRight size={16} strokeWidth={2} />
@@ -351,7 +351,7 @@ export default async function HomePage() {
                 #KushtalAtelier
               </h2>
             </div>
-            <p className="max-w-sm text-[13px] leading-5 text-ink-muted">
+            <p className="max-w-sm text-[14px] sm:text-[13px] leading-5 text-ink-muted">
               Así se hace y así se vive una pieza Kushtal: del corte en el
               taller a la pátina de todos los días.
             </p>
@@ -374,7 +374,7 @@ export default async function HomePage() {
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <figcaption className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-anil/85 via-anil/20 to-transparent p-4 text-algodon opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
-                  <span className="text-[9px] tracking-widest text-ceniza uppercase">
+                  <span className="text-[14px] sm:text-[9px] tracking-widest text-ceniza uppercase">
                     {photo.tag}
                   </span>
                   <span className="font-display text-[18px] italic">
@@ -395,7 +395,7 @@ export default async function HomePage() {
                 <h3 className="font-display text-[22px] leading-[30px]">
                   ¿Es un regalo?
                 </h3>
-                <p className="max-w-xl text-[13px] leading-5 text-ceniza">
+                <p className="max-w-xl text-[14px] sm:text-[13px] leading-5 text-ceniza">
                   Agrega la caja de regalo y su nombre grabado. Todas las
                   piezas tienen 30 días de garantía en costuras y herrajes.
                 </p>
@@ -404,14 +404,14 @@ export default async function HomePage() {
             <div className="flex shrink-0 flex-wrap gap-3">
               <Link
                 href="/regalos-personalizados"
-                className="inline-flex items-center gap-2 rounded-full bg-cafe px-6 py-3 text-[13px] font-semibold text-algodon transition-colors hover:bg-cafe/90"
+                className="inline-flex items-center gap-2 rounded-full bg-cafe px-6 py-3 text-[14px] sm:text-[13px] font-semibold text-algodon transition-colors hover:bg-cafe/90"
               >
                 <Gift size={16} strokeWidth={1.8} />
                 Diseñar un regalo
               </Link>
               <Link
                 href="/garantia"
-                className="inline-flex items-center gap-2 rounded-full border border-algodon/50 px-6 py-3 text-[13px] font-semibold text-algodon transition-colors hover:bg-algodon/10"
+                className="inline-flex items-center gap-2 rounded-full border border-algodon/50 px-6 py-3 text-[14px] sm:text-[13px] font-semibold text-algodon transition-colors hover:bg-algodon/10"
               >
                 Ver la garantía
               </Link>
@@ -430,13 +430,13 @@ function SetupNotice({ message }: { message: string }) {
       <p className="font-display text-lg font-semibold text-piedra">
         El catálogo todavía no está conectado
       </p>
-      <p className="mt-2 max-w-xl text-[13px] leading-5 text-ink-muted">
+      <p className="mt-2 max-w-xl text-[14px] sm:text-[13px] leading-5 text-ink-muted">
         Copia <code className="rounded bg-surface-high px-1.5 py-0.5">.env.example</code> a{" "}
         <code className="rounded bg-surface-high px-1.5 py-0.5">.env.local</code>, pega
         las credenciales de tu proyecto de Supabase y corre la migración junto
         con el seed. El detalle está en el README.
       </p>
-      <p className="mt-4 font-mono text-[11px] text-ink-muted">{message}</p>
+      <p className="mt-4 font-mono text-[14px] sm:text-[11px] text-ink-muted">{message}</p>
     </div>
   );
 }

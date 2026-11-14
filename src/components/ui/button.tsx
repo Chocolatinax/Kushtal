@@ -29,7 +29,7 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-4 text-[13px]",
+  sm: "h-9 px-4 text-[14px] sm:text-[13px]",
   md: "h-11 px-6 text-sm",
   lg: "h-12 px-8 text-sm",
 };

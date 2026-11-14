@@ -6,7 +6,13 @@ import { CatalogFilters } from "@/components/product/catalog-filters";
 import { ProductCard } from "@/components/product/product-card";
 import { Badge, Eyebrow } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
-import { getCatalog, getCategories, type CatalogSort } from "@/lib/db/products";
+import { RFID_MODELS } from "@/lib/catalog-routes";
+import {
+  getCatalog,
+  getCategories,
+  getRfidDeltas,
+  type CatalogSort,
+} from "@/lib/db/products";
 import type { Product } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -54,8 +60,13 @@ export default async function CatalogPage({ searchParams }: PageProps) {
     return Array.isArray(v) ? v[0] : v;
   };
 
+  // "Con bloqueo RFID": solo los modelos que existen en versión RFID, y sus
+  // tarjetas abren el configurador con el bloqueo ya incluido.
+  const onlyRfid = one("rfid") === "si";
+
   const filters = {
     category: one("categoria"),
+    slugs: onlyRfid ? RFID_MODELS : undefined,
     texture: one("textura"),
     q: one("q"),
     sort: (one("orden") as CatalogSort | undefined) ?? "popular",
@@ -65,13 +76,15 @@ export default async function CatalogPage({ searchParams }: PageProps) {
   let categories: { code: string; label: string; count: number }[] = [];
   let total = 0;
   let dbError: string | null = null;
+  let rfidDeltas = new Map<string, number>();
 
   try {
     [products, categories] = await Promise.all([
       getCatalog(filters),
-      getCategories({ texture: filters.texture, q: filters.q }),
+      getCategories({ texture: filters.texture, q: filters.q, slugs: filters.slugs }),
     ]);
     total = categories.reduce((n, c) => n + c.count, 0);
+    if (onlyRfid) rfidDeltas = await getRfidDeltas(products.map((p) => p.slug));
   } catch (err) {
     dbError = err instanceof Error ? err.message : "Error desconocido";
   }
@@ -91,7 +104,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
               Billeteras y tarjeteros personalizados
             </h1>
 
-            <p className="mt-4 text-[15px] leading-6 text-ink-muted">
+            <p className="mt-4 text-base sm:text-[15px] leading-6 text-ink-muted">
               Elige un modelo y hazlo tuyo: color, tipo de piel, forro,
               accesorios y monograma. Todas parten de $50 y ves el diseño final
               antes de comprar.
@@ -117,17 +130,17 @@ export default async function CatalogPage({ searchParams }: PageProps) {
             <p className="font-display text-lg font-semibold text-piedra">
               El catálogo todavía no está conectado
             </p>
-            <p className="mt-2 text-[13px] text-ink-muted">
+            <p className="mt-2 text-[14px] sm:text-[13px] text-ink-muted">
               Configura Supabase siguiendo el README y vuelve a cargar.
             </p>
-            <p className="mt-3 font-mono text-[11px] text-ink-muted">{dbError}</p>
+            <p className="mt-3 font-mono text-[14px] sm:text-[11px] text-ink-muted">{dbError}</p>
           </div>
         ) : products.length === 0 ? (
           <div className="rounded-xl border border-outline-variant/70 bg-surface-lowest p-12 text-center">
             <p className="font-display text-xl font-semibold text-piedra">
               Ninguna pieza coincide con ese filtro
             </p>
-            <p className="mt-2 text-[13px] text-ink-muted">
+            <p className="mt-2 text-[14px] sm:text-[13px] text-ink-muted">
               Prueba quitando la piel o la búsqueda para ver la
               colección completa.
             </p>
@@ -139,11 +152,19 @@ export default async function CatalogPage({ searchParams }: PageProps) {
           <>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  {...(onlyRfid && {
+                    href: `/personalizar/${product.slug}?rfid=si`,
+                    rfid: "included" as const,
+                    rfidDeltaCents: rfidDeltas.get(product.slug),
+                  })}
+                />
               ))}
             </div>
 
-            <p className="mt-8 text-[13px] text-ink-muted">
+            <p className="mt-8 text-[14px] sm:text-[13px] text-ink-muted">
               Mostrando {products.length} de {total} modelos
             </p>
           </>
@@ -158,7 +179,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
             <h2 className="mt-3 font-display text-[28px] leading-9 font-semibold text-piedra md:text-[34px] md:leading-[44px]">
               Cada pieza se corta, cose y graba a mano cuando haces tu pedido.
             </h2>
-            <p className="mt-4 text-[15px] leading-6 text-ink-muted">
+            <p className="mt-4 text-base sm:text-[15px] leading-6 text-ink-muted">
               No fabricamos en serie: tu billetera empieza a hacerse cuando
               terminas de configurarla. El cuero toma con el uso una pátina que
               la hace única.
@@ -179,7 +200,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
                 <h3 className="mt-2 font-display text-[22px] leading-7 font-semibold text-piedra">
                   {pillar.title}
                 </h3>
-                <p className="mt-2.5 flex-1 text-[13px] leading-5 text-ink-muted">
+                <p className="mt-2.5 flex-1 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                   {pillar.body}
                 </p>
 
@@ -196,7 +217,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
               <p className="mt-2 font-display text-[22px] leading-7 font-semibold text-piedra">
                 ¿Quieres diseñar tu billetera desde cero?
               </p>
-              <p className="mt-2 max-w-xl text-[13px] leading-5 text-ink-muted">
+              <p className="mt-2 max-w-xl text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                 Elige color, piel, forro, herrajes y accesorios como el
                 espacio para AirTag, y mira tu monograma en golpe seco o
                 lámina de oro antes de comprar.

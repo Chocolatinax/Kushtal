@@ -9,7 +9,7 @@ export default function NotFound() {
         <h1 className="mt-3 font-display text-[32px] leading-10 font-semibold text-piedra md:text-[42px] md:leading-[52px]">
           Esta pieza no está en el taller
         </h1>
-        <p className="mt-4 text-[15px] leading-6 text-ink-muted">
+        <p className="mt-4 text-base sm:text-[15px] leading-6 text-ink-muted">
           La página que buscas no existe o el modelo salió del catálogo. Vuelve a
           la colección y elige tu próxima pieza.
         </p>

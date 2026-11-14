@@ -43,14 +43,14 @@ export function Footer() {
           <p className="font-display text-xl font-semibold tracking-[0.12em] text-piedra">
             KUSHTAL
           </p>
-          <p className="mt-4 max-w-xs text-[13px] leading-5 text-ink-muted">
+          <p className="mt-4 max-w-xs text-[14px] sm:text-[13px] leading-5 text-ink-muted">
             Billeteras y tarjeteros de cuero que diseñas tú. Elige cada
             detalle en nuestro configurador y nosotros la hacemos a mano en El
             Salvador.
           </p>
 
           <p className="mt-8 eyebrow text-ink-muted">Escríbenos</p>
-          <div className="mt-3 flex flex-col gap-2 text-[13px]">
+          <div className="mt-3 flex flex-col gap-2 text-[14px] sm:text-[13px]">
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
@@ -95,7 +95,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-[13px] text-ink-muted transition-colors hover:text-anil"
+                    className="text-[14px] sm:text-[13px] text-ink-muted transition-colors hover:text-anil"
                   >
                     {link.label}
                   </Link>
@@ -107,7 +107,7 @@ export function Footer() {
 
         <div>
           <p className="eyebrow text-piedra">Compromiso</p>
-          <p className="mt-5 max-w-xs text-[13px] leading-5 text-ink-muted">
+          <p className="mt-5 max-w-xs text-[14px] sm:text-[13px] leading-5 text-ink-muted">
             Cada pieza se hace bajo pedido: no producimos en serie ni
             acumulamos inventario. Envíos a los 14 departamentos.
           </p>
@@ -120,7 +120,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-outline-variant/60">
-        <div className="canvas flex flex-col gap-3 py-5 text-[11px] text-ink-muted sm:flex-row sm:items-center">
+        <div className="canvas flex flex-col gap-3 py-5 text-[14px] sm:text-[11px] text-ink-muted sm:flex-row sm:items-center">
           <p>
             © {new Date().getFullYear()} Kushtal. Todos los derechos
             reservados.
@@ -133,7 +133,7 @@ export function Footer() {
               Privacidad
             </Link>
           </div>
-          <p className="label-pill text-[10px] sm:ml-auto">
+          <p className="label-pill text-[14px] sm:text-[10px] sm:ml-auto">
             Pago seguro{" "}
             <span className="ml-3">Visa · Mastercard · PayPal</span>
           </p>

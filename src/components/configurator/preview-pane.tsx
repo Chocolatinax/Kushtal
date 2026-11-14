@@ -167,7 +167,7 @@ export function PreviewPane({
         </span>
 
         {slide.caption && (
-          <span className="absolute bottom-3 left-3 rounded-full bg-algodon/95 px-3 py-1.5 text-[12px] font-semibold text-piedra shadow-sm">
+          <span className="absolute bottom-3 left-3 rounded-full bg-algodon/95 px-3 py-1.5 text-[14px] sm:text-[12px] font-semibold text-piedra shadow-sm">
             {slide.caption}
           </span>
         )}
@@ -190,7 +190,7 @@ export function PreviewPane({
             >
               <ChevronRight size={20} strokeWidth={1.8} />
             </button>
-            <span className="absolute bottom-3 right-3 rounded-full bg-piedra/70 px-2.5 py-1 text-[11px] font-semibold text-algodon tabular-nums">
+            <span className="absolute bottom-3 right-3 rounded-full bg-piedra/70 px-2.5 py-1 text-[14px] sm:text-[11px] font-semibold text-algodon tabular-nums">
               {index + 1} / {slides.length}
             </span>
           </>
@@ -198,14 +198,14 @@ export function PreviewPane({
       </div>
 
       {!main.exact && state.toneLabel && slide.id === "modelo" && (
-        <p className="-mt-1 text-[12px] leading-4 text-ink-muted">
+        <p className="-mt-1 text-[14px] sm:text-[12px] leading-5 sm:leading-4 text-ink-muted">
           Esta foto muestra el modelo en otro color. Tu pieza se hará en{" "}
           <strong className="text-piedra">{state.toneLabel}</strong>.
         </p>
       )}
 
       {/* Miniaturas: tocar una la muestra en grande */}
-      <ul className="grid grid-cols-4 gap-2.5 sm:grid-cols-7">
+      <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-7">
         <Thumb
           active={slide.id === "modelo"}
           onSelect={() => setActiveId("modelo")}
@@ -238,7 +238,7 @@ export function PreviewPane({
                   />
                 ) : (
                   // Sin foto todavía: un ícono neutro, el nombre ya va debajo.
-                  <Camera size={20} strokeWidth={1.4} className="text-outline" />
+                  <Camera size={20} strokeWidth={1.4} className="text-ink-muted" />
                 )
               }
             />
@@ -253,14 +253,14 @@ export function PreviewPane({
             {state.engraving}
           </span>
           {state.engravingFinishLabel && (
-            <span className="text-[12px] text-ink-muted">
+            <span className="text-[14px] sm:text-[12px] text-ink-muted">
               {state.engravingFinishLabel}
             </span>
           )}
         </div>
       )}
 
-      <p className="text-[12px] leading-4 text-ink-muted">
+      <p className="text-[14px] sm:text-[12px] leading-5 sm:leading-4 text-ink-muted">
         El color final puede variar levemente según el lote de piel y su pátina
         natural.
       </p>
@@ -293,7 +293,7 @@ function Thumb({
   fallback?: React.ReactNode;
 }) {
   return (
-    <li className="flex flex-col gap-1.5">
+    <li className="flex min-w-0 flex-col gap-1.5">
       <button
         type="button"
         onClick={onSelect}
@@ -315,8 +315,8 @@ function Thumb({
           fallback
         )}
       </button>
-      <p className="eyebrow text-[9px] text-ink-muted">{eyebrow}</p>
-      <p className="-mt-1 text-[12px] leading-4 font-medium text-piedra">
+      <p className="eyebrow text-[14px] tracking-[0.02em] text-ink-muted [overflow-wrap:anywhere] sm:text-[9px] sm:tracking-[0.08em]">{eyebrow}</p>
+      <p className="-mt-1 text-[14px] sm:text-[12px] leading-5 sm:leading-4 font-medium text-piedra [overflow-wrap:anywhere]">
         {label}
       </p>
     </li>

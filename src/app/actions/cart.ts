@@ -5,8 +5,11 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { includesRfid } from "@/lib/catalog-routes";
-import { getOrCreateCartId } from "@/lib/db/cart";
-import { getProductWithOptions } from "@/lib/db/products";
+import { getOrCreateCartId, giftOptionFor } from "@/lib/db/cart";
+import {
+  getProductsWithOptionsByIds,
+  getProductWithOptions,
+} from "@/lib/db/products";
 import { ConfigurationError, priceConfiguration } from "@/lib/pricing";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -138,6 +141,67 @@ export async function updateCartItemQuantity(
 
   revalidatePath("/bolsa");
   revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+const giftSchema = z.object({
+  itemId: z.string().uuid(),
+  gift: z.boolean(),
+});
+
+/**
+ * Marca o quita la caja de regalo de una pieza desde la bolsa. Cambia el
+ * grupo "estuche" de su configuración y recalcula el precio en el servidor,
+ * igual que al agregarla.
+ */
+export async function setCartItemGift(input: unknown): Promise<ActionResult> {
+  const parsed = giftSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "Datos inválidos" };
+
+  const { itemId, gift } = parsed.data;
+
+  const cartId = await getOrCreateCartId(false);
+  if (!cartId) return { ok: false, error: "Tu bolsa está vacía" };
+
+  const supabase = createAdminClient();
+  const { data: row } = await supabase
+    .from("cart_items")
+    .select("id, product_id, config")
+    .eq("id", itemId)
+    .eq("cart_id", cartId)
+    .maybeSingle();
+  if (!row) return { ok: false, error: "Esa pieza ya no está en tu bolsa" };
+
+  const product = (await getProductsWithOptionsByIds([row.product_id as string])).get(
+    row.product_id as string,
+  );
+  const option = product ? giftOptionFor(product) : null;
+  if (!product || !option) {
+    return { ok: false, error: "Este modelo no tiene caja de regalo" };
+  }
+
+  const config = {
+    ...(row.config as Record<string, string>),
+    estuche: gift ? option.code : option.basic_code,
+  };
+
+  let unitPriceCents: number;
+  try {
+    ({ unitPriceCents } = priceConfiguration(product, config));
+  } catch (err) {
+    if (err instanceof ConfigurationError) return { ok: false, error: err.message };
+    throw err;
+  }
+
+  const { error } = await supabase
+    .from("cart_items")
+    .update({ config, unit_price_cents: unitPriceCents })
+    .eq("id", itemId)
+    .eq("cart_id", cartId);
+  if (error) return { ok: false, error: "No se pudo actualizar tu bolsa" };
+
+  revalidatePath("/bolsa");
+  revalidatePath("/checkout");
   return { ok: true };
 }
 

@@ -11,12 +11,24 @@ import {
   SILOS,
   type CatalogRoute,
 } from "@/lib/catalog-routes";
-import { getCatalog } from "@/lib/db/products";
+import { getCatalog, getRfidDeltas } from "@/lib/db/products";
+import { formatPrice } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
 import type { Product } from "@/lib/types";
 
 export async function CategoryPage({ route }: { route: CatalogRoute }) {
   const products: Product[] = await getCatalog(route.filter).catch(() => []);
+  // En las páginas RFID el bloqueo viene incluido: el "Desde" lo suma.
+  const withRfid = route.preset?.rfid === "si";
+  const rfidDeltas = withRfid
+    ? await getRfidDeltas(products.map((p) => p.slug))
+    : new Map<string, number>();
+  const fromCents =
+    products.length > 0
+      ? Math.min(
+          ...products.map((p) => p.base_price_cents + (rfidDeltas.get(p.slug) ?? 0)),
+        )
+      : 5000;
   const silo = SILOS.find((s) => s.segments[0] === route.segments[0])!;
   const isSilo = route.segments.length === 1;
   const subs = childrenOf(silo);
@@ -84,11 +96,13 @@ export async function CategoryPage({ route }: { route: CatalogRoute }) {
       </nav>
 
       <header className="mt-5 max-w-3xl">
-        <Eyebrow>Desde $50 · Hecha a mano en El Salvador</Eyebrow>
+        <Eyebrow>
+          Desde {formatPrice(fromCents).replace(".00", "")} · Hecha a mano en El Salvador
+        </Eyebrow>
         <h1 className="mt-3 font-display text-[30px] leading-[38px] font-semibold text-piedra md:text-[40px] md:leading-[48px]">
           {route.h1}
         </h1>
-        <p className="mt-4 text-[15px] leading-6 text-ink-muted">{route.intro}</p>
+        <p className="mt-4 text-base sm:text-[15px] leading-6 text-ink-muted">{route.intro}</p>
       </header>
 
       {/* Subcategorías del silo */}
@@ -133,10 +147,12 @@ export async function CategoryPage({ route }: { route: CatalogRoute }) {
                   key={product.id}
                   product={product}
                   href={configuratorHref(product.slug, route)}
+                  rfid={withRfid ? "included" : undefined}
+                  rfidDeltaCents={rfidDeltas.get(product.slug)}
                 />
               ))}
             </div>
-            <p className="mt-6 text-[13px] text-ink-muted">
+            <p className="mt-6 text-[14px] sm:text-[13px] text-ink-muted">
               {products.length} {products.length === 1 ? "modelo" : "modelos"}
               {route.preset?.rfid && " · con bloqueo RFID incluido"}
             </p>
@@ -153,7 +169,7 @@ export async function CategoryPage({ route }: { route: CatalogRoute }) {
           <div className="mt-6 flex flex-col divide-y divide-outline-variant/60 border-y border-outline-variant/60">
             {route.faq.map((f) => (
               <details key={f.q} className="group py-4">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold text-piedra">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base sm:text-[15px] font-semibold text-piedra">
                   {f.q}
                   <ChevronRight
                     size={16}
@@ -173,7 +189,7 @@ export async function CategoryPage({ route }: { route: CatalogRoute }) {
 
 function chip(active: boolean) {
   return [
-    "rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors",
+    "rounded-full border px-3.5 py-1.5 text-[14px] sm:text-[13px] font-medium transition-colors",
     active
       ? "border-anil bg-anil text-algodon"
       : "border-outline-variant text-ink-muted hover:border-anil hover:text-anil",

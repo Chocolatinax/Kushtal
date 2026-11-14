@@ -89,6 +89,20 @@ export interface CartItem {
   product: Product;
   /** Desglose legible de la configuración, resuelto al leer el carrito. */
   details: ConfigLineDetail[];
+  /**
+   * Caja de regalo del modelo (grupo "estuche"), para poder marcarla desde
+   * la bolsa. null si el modelo no la ofrece.
+   */
+  gift?: GiftOption | null;
+}
+
+export interface GiftOption {
+  /** Code del empaque de regalo (p. ej. "rigido"). */
+  code: string;
+  /** Code del empaque incluido sin costo (p. ej. "lino"). */
+  basic_code: string;
+  label: string;
+  price_delta_cents: number;
 }
 
 export interface Cart {
@@ -179,22 +193,26 @@ export interface ShippingOption {
   description: string;
   price_cents: number;
   badge: string;
+  /** Tiempo total estimado, corto, para la ficha y la bolsa. */
+  eta: string;
 }
 
 export const SHIPPING_OPTIONS: ShippingOption[] = [
   {
     code: "standard",
     label: "Envío estándar a todo El Salvador",
-    description: "3–5 días de confección + 1–3 días hábiles de entrega a domicilio.",
+    description: "Confección a mano y entrega a domicilio en 4 a 6 días hábiles.",
     price_cents: 400,
     badge: "Gratis desde $75",
+    eta: "Llega en 4 a 6 días hábiles",
   },
   {
     code: "express",
     label: "Envío express",
-    description: "Tu pieza pasa primero al taller y se entrega por courier en 24–48 horas.",
+    description: "Tu pieza pasa primero al taller y llega en 3 días hábiles.",
     price_cents: 900,
     badge: "Más rápido",
+    eta: "Prioridad en el taller: llega en 3 días hábiles",
   },
 ];
 

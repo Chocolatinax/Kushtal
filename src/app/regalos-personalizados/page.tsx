@@ -70,7 +70,7 @@ const STEPS = [
 const FAQ = [
   {
     q: "¿Con cuánta anticipación debo pedir un regalo personalizado?",
-    a: "La confección toma de 3 a 5 días hábiles y la entrega de 1 a 3 días más. Para fechas especiales te recomendamos pedir al menos 10 días antes.",
+    a: "Con envío estándar llega en 4 a 6 días hábiles, y con envío express en 3 días hábiles. Para fechas especiales te recomendamos pedir al menos 10 días antes.",
   },
   {
     q: "¿Puedo enviar el regalo directamente a otra persona?",
@@ -141,7 +141,7 @@ export default async function GiftsPage() {
             Regalos personalizados que{" "}
             <span className="italic text-cafe">se usan todos los días</span>
           </h1>
-          <p className="mt-4 max-w-xl text-[15px] leading-6 text-ink-muted">
+          <p className="mt-4 max-w-xl text-base sm:text-[15px] leading-6 text-ink-muted">
             Billeteras y tarjeteros de cuero hechos a mano en El Salvador, con
             su nombre o iniciales grabados y listos para regalar en caja
             rígida.
@@ -193,7 +193,7 @@ export default async function GiftsPage() {
                 <h3 className="font-display text-[19px] font-semibold text-piedra">
                   {o.title}
                 </h3>
-                <p className="mt-1.5 text-[13px] leading-5 text-ink-muted">
+                <p className="mt-1.5 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                   {o.body}
                 </p>
               </div>
@@ -217,10 +217,10 @@ export default async function GiftsPage() {
                 </span>
                 <div>
                   <p className="font-display text-[18px] font-semibold text-piedra">
-                    <span className="mr-2 text-outline">0{i + 1}</span>
+                    <span className="mr-2 text-ink-muted">0{i + 1}</span>
                     {step.title}
                   </p>
-                  <p className="mt-1 text-[13px] leading-5 text-ink-muted">
+                  <p className="mt-1 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                     {step.body}
                   </p>
                 </div>
@@ -268,7 +268,7 @@ export default async function GiftsPage() {
         <div className="mt-6 flex flex-col divide-y divide-outline-variant/60 border-y border-outline-variant/60">
           {FAQ.map((f) => (
             <details key={f.q} className="group py-4">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold text-piedra">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base sm:text-[15px] font-semibold text-piedra">
                 {f.q}
                 <ChevronRight
                   size={16}

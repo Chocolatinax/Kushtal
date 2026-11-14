@@ -3,9 +3,18 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Fragment, useMemo, useState, useTransition } from "react";
-import { AlertCircle, Check, Loader2, Plus, ShoppingBag } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  Gift,
+  Loader2,
+  Plus,
+  ShieldCheck,
+  ShoppingBag,
+} from "lucide-react";
 
 import { addToCart } from "@/app/actions/cart";
+import { ShippingEstimate } from "@/components/cart/shipping-estimate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -32,6 +41,8 @@ export function Configurator({
   images,
   preset = {},
   locked = [],
+  cartSubtotalCents = 0,
+  rfidHref,
 }: {
   product: ProductWithOptions;
   images: VariantImages;
@@ -39,9 +50,16 @@ export function Configurator({
   preset?: Configuration;
   /** Accesorios incluidos de fábrica que no se pueden quitar (p. ej. "rfid"). */
   locked?: string[];
+  /** Lo que ya hay en la bolsa, para el aviso de envío gratis. */
+  cartSubtotalCents?: number;
+  /** Si el modelo existe con bloqueo RFID y no se abrió así: enlace a esa versión. */
+  rfidHref?: string;
 }) {
   const router = useRouter();
   const groups = product.option_groups;
+  // El empaque (opción de regalo) era lo último del configurador y en las
+  // pruebas no se veía: se muestra justo después del monograma.
+  const orderedGroups = useMemo(() => moveGiftUp(groups), [groups]);
 
   const [config, setConfig] = useState<Configuration>(() =>
     defaultConfiguration(groups, {
@@ -196,7 +214,7 @@ export function Configurator({
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:gap-14">
       {/* ------------------------------------------- Lienzo */}
-      <div className="lg:sticky lg:top-32 lg:self-start">
+      <div className="min-w-0 lg:sticky lg:top-32 lg:self-start">
         <PreviewPane product={product} images={images} state={preview} />
       </div>
 
@@ -209,9 +227,9 @@ export function Configurator({
       />
 
       {/* ------------------------------------------- Opciones */}
-      <div>
+      <div className="min-w-0">
         <div className="flex flex-col gap-10">
-          {groups.map((group) => {
+          {orderedGroups.map((group) => {
             if (!isGroupActive(group, config)) return null;
 
             if (group.type !== "toggle") {
@@ -234,6 +252,7 @@ export function Configurator({
                 groups={toggles}
                 config={config}
                 locked={locked}
+                rfidHref={rfidHref}
                 onToggle={(code, on) => {
                   if (locked.includes(code)) return;
                   choose(code, on ? (groups.find((g) => g.code === code)?.values[0]?.code ?? "") : "");
@@ -273,7 +292,7 @@ export function Configurator({
             ))}
 
             {extras.length === 0 && (
-              <p className="text-[13px] text-ink-muted">
+              <p className="text-[14px] sm:text-[13px] text-ink-muted">
                 Sin elementos de costo adicional. El grabado y la funda de lino
                 van incluidos.
               </p>
@@ -283,7 +302,7 @@ export function Configurator({
           <div className="mt-5 flex items-end justify-between gap-4 border-t border-outline-variant/60 pt-5">
             <div>
               <p className="eyebrow text-ink-muted">Precio de tu pieza</p>
-              <p className="mt-1 font-display text-3xl font-semibold text-piedra tabular-nums">
+              <p className="mt-1 whitespace-nowrap font-display text-2xl font-semibold text-piedra tabular-nums sm:text-3xl">
                 {formatPriceUSD(unitPrice)}
               </p>
             </div>
@@ -291,10 +310,16 @@ export function Configurator({
             <QuantityStepper value={quantity} onChange={setQuantity} />
           </div>
 
+          <GiftToggle
+            group={groups.find((g) => g.code === "estuche")}
+            selected={config.estuche}
+            onChange={(value) => choose("estuche", value)}
+          />
+
           {error && (
             <p
               role="alert"
-              className="mt-4 flex items-start gap-2 rounded-sm bg-danger-container px-3 py-2.5 text-[13px] text-danger-ink"
+              className="mt-4 flex items-start gap-2 rounded-sm bg-danger-container px-3 py-2.5 text-[14px] sm:text-[13px] text-danger-ink"
             >
               <AlertCircle size={15} strokeWidth={2} className="mt-px shrink-0" />
               {error}
@@ -328,16 +353,17 @@ export function Configurator({
           {added && (
             <Link
               href="/bolsa"
-              className="mt-3 block text-center text-[13px] font-semibold text-anil link-underline"
+              className="mt-3 block text-center text-[14px] sm:text-[13px] font-semibold text-anil link-underline"
             >
               Ir a la bolsa de compra
             </Link>
           )}
 
-          <p className="mt-4 text-center text-[12px] leading-4 text-ink-muted">
-            Confección artesanal de 3 a 5 días. Envío gratis a todo El Salvador
-            desde $75.
-          </p>
+          <ShippingEstimate
+            subtotalCents={cartSubtotalCents + unitPrice * quantity}
+            context="product"
+            className="mt-5"
+          />
         </div>
       </div>
     </div>
@@ -363,15 +389,21 @@ function OptionGroupBlock({
         <legend className="font-display text-[22px] leading-7 font-semibold text-piedra">
           {group.label}
           {!group.required && (
-            <span className="ml-2 align-middle text-[11px] font-sans font-semibold uppercase tracking-wider text-ink-muted">
+            <span className="ml-2 align-middle text-[14px] sm:text-[11px] font-sans font-semibold uppercase tracking-wider text-ink-muted">
               Opcional
+            </span>
+          )}
+          {group.code === GIFT_GROUP && (
+            <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-cafe-container px-2.5 py-0.5 align-middle text-[14px] sm:text-[11px] font-sans font-semibold uppercase tracking-wider text-cafe">
+              <Gift size={13} strokeWidth={2} aria-hidden />
+              Opción de regalo
             </span>
           )}
         </legend>
       </div>
 
       {group.helper && (
-        <p className="mt-1.5 text-[13px] leading-5 text-ink-muted">
+        <p className="mt-1.5 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
           {group.helper}
         </p>
       )}
@@ -397,22 +429,24 @@ function AccessoriesBlock({
   groups,
   config,
   locked,
+  rfidHref,
   onToggle,
 }: {
   groups: OptionGroup[];
   config: Configuration;
   locked: string[];
+  rfidHref?: string;
   onToggle: (code: string, on: boolean) => void;
 }) {
   return (
     <fieldset id="grupo-accesorios" className="scroll-mt-32">
       <legend className="font-display text-[22px] leading-7 font-semibold text-piedra">
         Accesorios
-        <span className="ml-2 align-middle text-[11px] font-sans font-semibold uppercase tracking-wider text-ink-muted">
+        <span className="ml-2 align-middle text-[14px] sm:text-[11px] font-sans font-semibold uppercase tracking-wider text-ink-muted">
           Opcional
         </span>
       </legend>
-      <p className="mt-1.5 text-[13px] leading-5 text-ink-muted">
+      <p className="mt-1.5 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
         Funciones extra que se integran en la pieza. Puedes elegir varias.
       </p>
 
@@ -449,14 +483,20 @@ function AccessoriesBlock({
               <span className="flex flex-1 flex-col">
                 <span className="label-pill text-piedra">{group.label}</span>
                 {group.helper && (
-                  <span className="mt-1.5 text-[12px] leading-4 text-ink-muted">
+                  <span className="mt-1.5 text-[14px] sm:text-[12px] leading-5 sm:leading-4 text-ink-muted">
                     {group.helper}
                   </span>
                 )}
-                <span className="mt-3 text-[13px] font-semibold text-cafe">
+                {group.code === "rfid" && (
+                  <span className="mt-2 flex items-start gap-1.5 text-[14px] sm:text-[13px] leading-5 text-torogoz-ink">
+                    <ShieldCheck size={15} strokeWidth={1.9} className="mt-0.5 shrink-0" aria-hidden />
+                    {RFID_EXPLAINER}
+                  </span>
+                )}
+                <span className="mt-3 text-[14px] sm:text-[13px] font-semibold text-cafe">
                   +{formatPrice(value.price_delta_cents)}
                   {isLocked && (
-                    <span className="ml-2 text-[11px] font-semibold uppercase tracking-wider text-torogoz-ink">
+                    <span className="ml-2 text-[14px] sm:text-[11px] font-semibold uppercase tracking-wider text-torogoz-ink">
                       Incluido en este modelo
                     </span>
                   )}
@@ -466,7 +506,105 @@ function AccessoriesBlock({
           );
         })}
       </div>
+
+      {rfidHref && (
+        <div className="mt-3 flex items-start gap-3 rounded-lg border border-dashed border-torogoz/50 bg-torogoz-container/50 p-4">
+          <ShieldCheck size={18} strokeWidth={1.8} className="mt-0.5 shrink-0 text-torogoz-ink" aria-hidden />
+          <div className="flex-1">
+            <p className="text-[15px] font-semibold text-piedra">
+              Este modelo también existe con bloqueo RFID
+            </p>
+            <p className="mt-1 text-[14px] leading-5 text-ink-muted">
+              {RFID_EXPLAINER}
+            </p>
+            <Link
+              href={rfidHref}
+              className="mt-2 inline-block text-[14px] font-semibold text-anil link-underline"
+            >
+              Ver la versión con bloqueo RFID
+            </Link>
+          </div>
+        </div>
+      )}
     </fieldset>
+  );
+}
+
+/** Explicación corta: en las pruebas una participante no sabía qué era RFID. */
+const RFID_EXPLAINER =
+  "¿Qué es? Un forro que protege tus tarjetas contra la clonación: nadie puede leerlas a distancia sin contacto.";
+
+const GIFT_GROUP = "estuche";
+
+/** Pone el empaque (opción de regalo) justo después del monograma. */
+function moveGiftUp(groups: OptionGroup[]): OptionGroup[] {
+  const gift = groups.find((g) => g.code === GIFT_GROUP);
+  if (!gift) return groups;
+  const rest = groups.filter((g) => g !== gift);
+  const lastEngraving = Math.max(
+    rest.findIndex((g) => g.code === "grabado"),
+    rest.findIndex((g) => g.code === "grabado_acabado"),
+  );
+  if (lastEngraving < 0) return groups;
+  return [
+    ...rest.slice(0, lastEngraving + 1),
+    gift,
+    ...rest.slice(lastEngraving + 1),
+  ];
+}
+
+/**
+ * Atajo de regalo junto al botón de compra: marca la caja de regalo sin
+ * tener que volver a buscar el grupo "Empaque".
+ */
+function GiftToggle({
+  group,
+  selected,
+  onChange,
+}: {
+  group: OptionGroup | undefined;
+  selected: string | undefined;
+  onChange: (value: string) => void;
+}) {
+  const basic = group?.values.find((v) => v.active && v.price_delta_cents === 0);
+  const giftBox = group?.values.find((v) => v.active && v.code !== basic?.code);
+  if (!group || !basic || !giftBox) return null;
+  const isGift = selected === giftBox.code;
+
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isGift}
+      onClick={() => onChange(isGift ? basic.code : giftBox.code)}
+      className={cn(
+        "mt-5 flex w-full items-start gap-3 rounded-lg border p-4 text-left transition-all",
+        isGift
+          ? "border-cafe border-[1.5px] bg-cafe-container/60"
+          : "border-dashed border-cafe/60 bg-surface-lowest hover:bg-cafe-container/40",
+      )}
+    >
+      <span
+        className={cn(
+          "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-xs border-[1.5px] transition-colors",
+          isGift ? "border-cafe bg-cafe text-algodon" : "border-cafe/70",
+        )}
+      >
+        {isGift && <Check size={13} strokeWidth={3} />}
+      </span>
+      <span className="flex-1">
+        <span className="flex items-center gap-1.5 text-[15px] font-semibold text-piedra">
+          <Gift size={16} strokeWidth={1.8} className="text-cafe" aria-hidden />
+          ¿Es un regalo?
+        </span>
+        <span className="mt-1 block text-[14px] leading-5 text-ink-muted">
+          {giftBox.description ?? giftBox.label}{" "}
+          <span className="font-semibold text-cafe">
+            +{formatPrice(giftBox.price_delta_cents)}
+          </span>
+        </span>
+      </span>
+    </button>
   );
 }
 
@@ -484,7 +622,7 @@ function MobilePreviewBar({
   const main = mainImageFor(product, images, state.toneCode);
 
   return (
-    <div className="sticky top-[101px] z-30 -mx-5 -mt-6 border-y border-outline-variant/60 bg-algodon/95 px-5 py-2.5 backdrop-blur-sm md:-mx-8 md:px-8 lg:hidden">
+    <div className="sticky top-[101px] z-30 -mx-5 -mt-6 min-w-0 border-y border-outline-variant/60 bg-algodon/95 px-5 py-2.5 backdrop-blur-sm md:-mx-8 md:px-8 lg:hidden">
       <div className="flex items-center gap-3">
         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-outline-variant/70 bg-surface-container">
           {main.src && (
@@ -499,10 +637,10 @@ function MobilePreviewBar({
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[13px] font-semibold text-piedra">
+          <p className="truncate text-[14px] sm:text-[13px] font-semibold text-piedra">
             {product.name}
           </p>
-          <p className="truncate text-[12px] text-ink-muted">
+          <p className="truncate text-[14px] sm:text-[12px] text-ink-muted">
             {[state.toneLabel, state.details[0]?.label]
               .filter(Boolean)
               .join(" · ")}
@@ -569,7 +707,7 @@ function ColorSwatches({
             <Badge tone="eco">Incluido</Badge>
           )}
           {active.description && (
-            <p className="w-full text-[13px] text-ink-muted">
+            <p className="w-full text-[14px] sm:text-[13px] text-ink-muted">
               {active.description}
             </p>
           )}
@@ -613,14 +751,14 @@ function OptionCards({
             </div>
 
             {value.description && (
-              <span className="mt-1.5 text-[12px] leading-4 text-ink-muted">
+              <span className="mt-1.5 text-[14px] sm:text-[12px] leading-5 sm:leading-4 text-ink-muted">
                 {value.description}
               </span>
             )}
 
             <span
               className={cn(
-                "mt-3 text-[13px] font-semibold",
+                "mt-3 text-[14px] sm:text-[13px] font-semibold",
                 value.price_delta_cents > 0 ? "text-cafe" : "text-torogoz-ink",
               )}
             >
@@ -656,14 +794,14 @@ function EngravingInput({
           placeholder="M.V.R."
           aria-label="Texto del monograma"
           onChange={(e) => onChange(e.target.value)}
-          className="w-full rounded-sm border border-outline-variant bg-surface-container px-4 py-3.5 font-display text-xl tracking-[0.12em] text-ink uppercase placeholder:text-ink-muted/40 placeholder:normal-case focus:border-anil focus:border-[1.5px] focus:outline-none focus:shadow-[0_0_0_3px_rgb(30_43_79_/_0.08)]"
+          className="w-full rounded-sm border border-outline-variant bg-surface-container px-4 py-3.5 font-display text-xl tracking-[0.12em] text-ink uppercase placeholder:text-ink-placeholder placeholder:normal-case focus:border-anil focus:border-[1.5px] focus:outline-none focus:shadow-[0_0_0_3px_rgb(30_43_79_/_0.08)]"
         />
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] tabular-nums text-ink-muted">
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[14px] sm:text-[12px] tabular-nums text-ink-muted">
           {clean.length}/{maxLength}
         </span>
       </div>
 
-      <p className="mt-2 text-[12px] text-ink-muted">
+      <p className="mt-2 text-[14px] sm:text-[12px] text-ink-muted">
         Letras, números y los signos . &amp; &apos; -. Se graba en versalitas
         sobre la cara interior.
       </p>
@@ -689,7 +827,7 @@ function QuantityStepper({
       >
         −
       </button>
-      <span className="w-8 text-center text-[15px] font-semibold tabular-nums text-piedra">
+      <span className="w-8 text-center text-base sm:text-[15px] font-semibold tabular-nums text-piedra">
         {value}
       </span>
       <button

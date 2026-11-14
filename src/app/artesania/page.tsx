@@ -168,7 +168,7 @@ export default function CraftPage() {
             <span className="h-2 w-2 rounded-full bg-cafe" />
             Taller Kushtal · Cómo trabajamos
           </p>
-          <p className="eyebrow tracking-widest text-outline">
+          <p className="eyebrow tracking-widest text-ink-muted">
             Artesanía y cuidado
           </p>
         </div>
@@ -184,7 +184,7 @@ export default function CraftPage() {
               <span className="rounded-sm bg-torogoz/12 px-3 py-1 eyebrow text-torogoz-ink">
                 Hecha bajo pedido
               </span>
-              <span className="eyebrow tracking-wider text-outline">
+              <span className="eyebrow tracking-wider text-ink-muted">
                 Sin producción en serie
               </span>
             </div>
@@ -196,7 +196,7 @@ export default function CraftPage() {
               pedido. No producimos en serie ni acumulamos inventario: tu pieza
               empieza a hacerse cuando terminas de diseñarla.
             </p>
-            <p className="text-[15px] leading-[26px] text-ink-muted">
+            <p className="text-base sm:text-[15px] leading-[26px] text-ink-muted">
               Trabajamos el cuero para que envejezca bien. Con el uso toma una
               pátina propia que registra tus viajes y tu forma de usarla.
             </p>
@@ -214,10 +214,10 @@ export default function CraftPage() {
               <dt className="eyebrow tracking-[0.15em] text-cafe">
                 {fact.eyebrow}
               </dt>
-              <dd className="text-[15px] font-medium text-piedra">
+              <dd className="text-base sm:text-[15px] font-medium text-piedra">
                 {fact.title}
               </dd>
-              <dd className="text-[13px] text-ink-muted">{fact.note}</dd>
+              <dd className="text-[14px] sm:text-[13px] text-ink-muted">{fact.note}</dd>
             </div>
           ))}
         </dl>
@@ -235,7 +235,7 @@ export default function CraftPage() {
                 Pieles y texturas
               </h2>
             </div>
-            <p className="flex items-center text-[15px] leading-[26px] text-ink-muted lg:col-span-8 lg:pl-6">
+            <p className="flex items-center text-base sm:text-[15px] leading-[26px] text-ink-muted lg:col-span-8 lg:pl-6">
               Trabajamos con cuero que no esconde su origen: reacciona a la luz,
               absorbe los aceites de tus manos y desarrolla una pátina
               irrepetible. Cada tipo tiene un tacto y una forma de envejecer
@@ -279,17 +279,17 @@ export default function CraftPage() {
                     <span className="eyebrow tracking-widest text-cafe">
                       {leather.name}
                     </span>
-                    <span className="eyebrow tracking-wider text-outline">
+                    <span className="eyebrow tracking-wider text-ink-muted">
                       {leather.meta}
                     </span>
                   </div>
                   <h3 className="font-display text-[22px] leading-[30px] font-medium text-piedra">
                     {leather.title}
                   </h3>
-                  <p className="text-[15px] leading-[26px] text-ink-muted">
+                  <p className="text-base sm:text-[15px] leading-[26px] text-ink-muted">
                     {leather.body}
                   </p>
-                  <ul className="flex flex-wrap gap-x-5 gap-y-1 pt-1 text-[12px] font-semibold text-ink-muted">
+                  <ul className="flex flex-wrap gap-x-5 gap-y-1 pt-1 text-[14px] sm:text-[12px] font-semibold text-ink-muted">
                     {leather.specs.map((spec) => (
                       <li key={spec}>· {spec}</li>
                     ))}
@@ -308,15 +308,15 @@ export default function CraftPage() {
                     <span className="eyebrow tracking-widest text-cafe">
                       {leather.n} · {leather.name}
                     </span>
-                    <span className="eyebrow text-outline">{leather.meta}</span>
+                    <span className="eyebrow text-ink-muted">{leather.meta}</span>
                   </div>
                   <h3 className="font-display text-[22px] leading-[30px] font-medium text-piedra">
                     {leather.title}
                   </h3>
-                  <p className="text-[15px] leading-[26px] text-ink-muted">
+                  <p className="text-base sm:text-[15px] leading-[26px] text-ink-muted">
                     {leather.body}
                   </p>
-                  <ul className="flex flex-wrap gap-x-6 gap-y-1 pt-1 text-[12px] font-semibold text-cafe">
+                  <ul className="flex flex-wrap gap-x-6 gap-y-1 pt-1 text-[14px] sm:text-[12px] font-semibold text-cafe">
                     {leather.tags.map((tag) => (
                       <li key={tag}>{tag}</li>
                     ))}
@@ -337,7 +337,7 @@ export default function CraftPage() {
                   Forros de tela
                 </h3>
               </div>
-              <p className="max-w-md text-[13px] leading-5 text-ink-muted">
+              <p className="max-w-md text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                 El interior recibe el mismo cuidado que el exterior. Elige el
                 forro en el configurador: es lo que ves cada vez que abres tu
                 billetera.
@@ -366,7 +366,7 @@ export default function CraftPage() {
                     <h4 className="text-[18px] leading-[26px] font-bold text-piedra">
                       {lining.name}
                     </h4>
-                    <p className="text-[13px] leading-5 text-ink-muted">
+                    <p className="text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                       {lining.body}
                     </p>
                   </div>
@@ -393,7 +393,7 @@ export default function CraftPage() {
               Cómo se hace tu billetera
             </h2>
           </div>
-          <p className="eyebrow tracking-wider text-outline">4 pasos</p>
+          <p className="eyebrow tracking-wider text-ink-muted">4 pasos</p>
         </div>
 
         <ol className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
@@ -408,17 +408,17 @@ export default function CraftPage() {
                 <span className="font-display text-[40px] leading-[48px] font-light text-cafe">
                   {step.n}
                 </span>
-                <span className="eyebrow tracking-wider text-outline">
+                <span className="eyebrow tracking-wider text-ink-muted">
                   {step.tag}
                 </span>
               </div>
               <h3 className="font-display text-[22px] leading-[30px] font-medium text-piedra">
                 {step.title}
               </h3>
-              <p className="text-[15px] leading-[26px] text-ink-muted">
+              <p className="text-base sm:text-[15px] leading-[26px] text-ink-muted">
                 {step.body}
               </p>
-              <p className="pt-1 text-[12px] font-semibold text-piedra">
+              <p className="pt-1 text-[14px] sm:text-[12px] font-semibold text-piedra">
                 {step.detail}
               </p>
             </li>
@@ -436,19 +436,19 @@ export default function CraftPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:col-span-8">
             <div className="flex flex-col gap-1">
-              <span className="text-[12px] font-bold tracking-[0.05em] text-piedra">
+              <span className="text-[14px] sm:text-[12px] font-bold tracking-[0.05em] text-piedra">
                 Costura a mano (dos agujas)
               </span>
-              <p className="text-[13px] leading-5 text-ink-muted">
+              <p className="text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                 Dos hilos independientes se cruzan en cada orificio. Si uno se
                 corta, el resto de la costura sigue firme.
               </p>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-[12px] font-semibold tracking-[0.05em] text-outline">
+              <span className="text-[14px] sm:text-[12px] font-semibold tracking-[0.05em] text-ink-muted">
                 Costura de máquina
               </span>
-              <p className="text-[13px] leading-5 text-ink-muted">
+              <p className="text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                 Un hilo de arriba y uno de abajo enlazados. Si se rompe un
                 punto, la costura se puede ir soltando poco a poco.
               </p>
@@ -469,7 +469,7 @@ export default function CraftPage() {
               <br />
               <span className="italic text-cafe">acompañar la pátina</span>
             </h2>
-            <p className="text-[15px] leading-[26px] text-ink-muted">
+            <p className="text-base sm:text-[15px] leading-[26px] text-ink-muted">
               El cuero no necesita cuidados complicados, solo entender que es
               un material vivo. Con estas tres pautas tu billetera se mantiene
               flexible durante años.
@@ -498,7 +498,7 @@ export default function CraftPage() {
                 <h3 className="font-display text-[22px] leading-[30px] font-medium text-piedra">
                   {item.title}
                 </h3>
-                <p className="text-[15px] leading-[26px] text-ink-muted">
+                <p className="text-base sm:text-[15px] leading-[26px] text-ink-muted">
                   {item.body}
                 </p>
               </div>
@@ -531,7 +531,7 @@ export default function CraftPage() {
               Ver la colección
             </ButtonLink>
           </div>
-          <p className="mt-12 flex flex-wrap justify-center gap-x-5 gap-y-2 eyebrow tracking-widest text-outline">
+          <p className="mt-12 flex flex-wrap justify-center gap-x-5 gap-y-2 eyebrow tracking-widest text-ink-muted">
             <span>Hecho a mano</span>
             <span>·</span>
             <span>Envíos a todo El Salvador</span>

@@ -5,7 +5,8 @@ import { ChevronRight } from "lucide-react";
 
 import { Configurator } from "@/components/configurator/configurator";
 import { Badge, Eyebrow } from "@/components/ui/badge";
-import { includesRfid } from "@/lib/catalog-routes";
+import { includesRfid, RFID_MODELS } from "@/lib/catalog-routes";
+import { getCart } from "@/lib/db/cart";
 import { getProductWithOptions } from "@/lib/db/products";
 import { SITE_URL } from "@/lib/site";
 import { COMMON_SPECS, PRODUCT_SPECS } from "@/lib/product-specs";
@@ -72,6 +73,11 @@ export default async function ConfiguratorPage({
         option_groups: fetched.option_groups.filter((g) => g.code !== "rfid"),
       };
 
+  // Para el aviso "te faltan $X para envío gratis" junto al precio.
+  const cartSubtotalCents = await getCart()
+    .then((c) => c.subtotal_cents)
+    .catch(() => 0);
+
   const specs = PRODUCT_SPECS[product.slug];
 
   // El precio publicado es el de partida; la personalización suma encima.
@@ -134,7 +140,7 @@ export default async function ConfiguratorPage({
             {product.name}
           </h1>
 
-          <p className="mt-3 text-[15px] leading-6 text-ink-muted">
+          <p className="mt-3 text-base sm:text-[15px] leading-6 text-ink-muted">
             {product.description}
           </p>
         </div>
@@ -143,7 +149,7 @@ export default async function ConfiguratorPage({
           {product.capacity_label && (
             <div>
               <dt className="eyebrow text-ink-muted">Capacidad</dt>
-              <dd className="mt-1 text-[13px] font-semibold text-piedra">
+              <dd className="mt-1 text-[14px] sm:text-[13px] font-semibold text-piedra">
                 {product.capacity_label}
               </dd>
             </div>
@@ -151,7 +157,7 @@ export default async function ConfiguratorPage({
           {product.leather_label && (
             <div>
               <dt className="eyebrow text-ink-muted">Detalle</dt>
-              <dd className="mt-1 text-[13px] font-semibold text-piedra">
+              <dd className="mt-1 text-[14px] sm:text-[13px] font-semibold text-piedra">
                 {product.leather_label}
               </dd>
             </div>
@@ -165,6 +171,12 @@ export default async function ConfiguratorPage({
           images={getVariantImages(product.slug)}
           preset={preset}
           locked={rfidIncluded ? ["rfid"] : []}
+          cartSubtotalCents={cartSubtotalCents}
+          rfidHref={
+            !rfidIncluded && RFID_MODELS.includes(product.slug)
+              ? `/personalizar/${product.slug}?rfid=si#grupo-accesorios`
+              : undefined
+          }
         />
       </div>
 
@@ -182,7 +194,7 @@ export default async function ConfiguratorPage({
             Detalles de {product.name}
           </h2>
           {specs && (
-            <p className="mt-3 text-[15px] leading-6 text-ink-muted">
+            <p className="mt-3 text-base sm:text-[15px] leading-6 text-ink-muted">
               {specs.idealFor}
             </p>
           )}

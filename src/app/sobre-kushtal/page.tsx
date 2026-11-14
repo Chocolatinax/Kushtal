@@ -129,10 +129,10 @@ export default function AboutPage() {
           >
             {FACTS.map((fact) => (
               <div key={fact.label} className="flex flex-col">
-                <dt className="mb-1 eyebrow tracking-widest text-outline">
+                <dt className="mb-1 eyebrow tracking-widest text-ink-muted">
                   {fact.label}
                 </dt>
-                <dd className="text-[15px] font-medium text-piedra">
+                <dd className="text-base sm:text-[15px] font-medium text-piedra">
                   {fact.value}
                 </dd>
               </div>
@@ -158,7 +158,7 @@ export default function AboutPage() {
         </div>
         <div
           className={cn(
-            "flex items-baseline justify-between gap-4 border-b pt-4 pb-3 text-[11px] font-bold tracking-wider text-ink-muted",
+            "flex items-baseline justify-between gap-4 border-b pt-4 pb-3 text-[14px] sm:text-[11px] font-bold tracking-wider text-ink-muted",
             hairline,
           )}
         >
@@ -166,7 +166,7 @@ export default function AboutPage() {
             Fig. 01 — Bifold Signature, Tarjetero No. 01 y Continental Roma,
             hechos a pedido.
           </span>
-          <span className="hidden text-outline sm:inline">
+          <span className="hidden text-ink-muted sm:inline">
             SAN SALVADOR, C.A.
           </span>
         </div>
@@ -185,7 +185,7 @@ export default function AboutPage() {
               <span className="italic text-cafe">de Stanford al taller.</span>
             </h2>
             <div className="mb-8 h-px w-12 bg-cafe" />
-            <p className="text-[13px] leading-5 tracking-wider text-outline uppercase">
+            <p className="text-[14px] sm:text-[13px] leading-5 tracking-wider text-ink-muted uppercase">
               Diseño centrado en las personas, inspirado en la d.school, aplicado
               al oficio del cuero.
             </p>
@@ -217,7 +217,7 @@ export default function AboutPage() {
                 “El objeto más personal no se elige de un estante; se diseña a
                 partir de los hábitos de quien lo lleva.”
               </p>
-              <footer className="mt-4 eyebrow tracking-widest text-outline">
+              <footer className="mt-4 eyebrow tracking-widest text-ink-muted">
                 — Kushtal
               </footer>
             </blockquote>
@@ -272,13 +272,13 @@ export default function AboutPage() {
                 <p className="mb-4 font-display text-[16px] font-semibold text-cafe">
                   {block.price}
                 </p>
-                <p className="text-[13px] leading-5 text-ink-muted">
+                <p className="text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                   {block.body}
                 </p>
               </div>
               <p
                 className={cn(
-                  "mt-6 border-t pt-4 eyebrow text-outline",
+                  "mt-6 border-t pt-4 eyebrow text-ink-muted",
                   hairline,
                 )}
               >
@@ -315,12 +315,12 @@ export default function AboutPage() {
               <h3 className="mb-4 font-display text-[22px] leading-[30px] font-normal text-anil">
                 {audience.title}
               </h3>
-              <p className="text-[15px] leading-[26px] font-light text-ink-muted">
+              <p className="text-base sm:text-[15px] leading-[26px] font-light text-ink-muted">
                 {audience.body}
               </p>
               <p
                 className={cn(
-                  "mt-8 flex items-center gap-2 border-t pt-4 eyebrow tracking-wider text-outline",
+                  "mt-8 flex items-center gap-2 border-t pt-4 eyebrow tracking-wider text-ink-muted",
                   hairline,
                 )}
               >

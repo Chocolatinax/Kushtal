@@ -64,7 +64,7 @@ export function CheckoutForm({
       {state.error && (
         <p
           role="alert"
-          className="flex items-start gap-2 rounded-lg bg-danger-container px-4 py-3 text-[13px] text-danger-ink"
+          className="flex items-start gap-2 rounded-lg bg-danger-container px-4 py-3 text-[14px] sm:text-[13px] text-danger-ink"
         >
           <AlertCircle size={15} strokeWidth={2} className="mt-px shrink-0" />
           {state.error}
@@ -202,13 +202,13 @@ export function CheckoutForm({
             </Field>
           </div>
 
-          <label className="mt-1 flex items-center gap-2.5 text-[13px] text-ink-muted">
+          <label className="mt-1 flex items-start gap-2.5 text-[14px] leading-5 sm:text-[13px] text-ink-muted">
             <input
               type="checkbox"
               name="save_info"
               value="true"
               defaultChecked
-              className="h-4 w-4 cursor-pointer rounded-xs border-[1.5px] border-piedra/35 accent-torogoz"
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-xs border-[1.5px] border-piedra/35 accent-torogoz"
             />
             Guardar estos datos para mis próximos pedidos.
           </label>
@@ -257,16 +257,16 @@ export function CheckoutForm({
                     <span className="font-display text-[17px] font-semibold text-piedra">
                       {option.label}
                     </span>
-                    <span className="rounded-full bg-surface-high px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-piedra">
+                    <span className="rounded-full bg-surface-high px-2 py-0.5 text-[14px] sm:text-[10px] font-bold uppercase tracking-wider text-piedra">
                       {option.badge}
                     </span>
                   </span>
-                  <span className="mt-1 block text-[13px] leading-5 text-ink-muted">
+                  <span className="mt-1 block text-[14px] sm:text-[13px] leading-5 text-ink-muted">
                     {option.description}
                   </span>
                 </span>
 
-                <span className="shrink-0 font-display text-[15px] font-semibold text-piedra">
+                <span className="shrink-0 font-display text-base sm:text-[15px] font-semibold text-piedra">
                   {shippingCostCents(subtotalCents, option.code) === 0
                     ? "Gratis"
                     : formatPrice(shippingCostCents(subtotalCents, option.code))}
@@ -303,7 +303,7 @@ export function CheckoutForm({
                 )}
               >
                 <tab.icon size={17} strokeWidth={1.7} />
-                <span className="text-[12px] font-semibold">{tab.label}</span>
+                <span className="text-[14px] sm:text-[12px] font-semibold">{tab.label}</span>
               </button>
             );
           })}
@@ -318,7 +318,7 @@ export function CheckoutForm({
             className="mt-0.5 shrink-0 text-torogoz"
           />
           <div className="min-w-0">
-            <p className="text-[13px] leading-5 text-ink-muted">
+            <p className="text-[14px] sm:text-[13px] leading-5 text-ink-muted">
               {PAYMENT_TABS.find((t) => t.code === payment)?.note}
             </p>
             {payment === "card" && (
@@ -326,7 +326,7 @@ export function CheckoutForm({
                 {["Visa", "Mastercard", "Amex"].map((brand) => (
                   <span
                     key={brand}
-                    className="rounded-xs border border-outline-variant bg-surface-lowest px-2 py-0.5 text-[10px] font-semibold tracking-wide text-piedra"
+                    className="rounded-xs border border-outline-variant bg-surface-lowest px-2 py-0.5 text-[14px] sm:text-[10px] font-semibold tracking-wide text-piedra"
                   >
                     {brand}
                   </span>
@@ -338,7 +338,7 @@ export function CheckoutForm({
 
         {/* Aviso discreto mientras no haya pasarela real configurada. */}
         {!stripeEnabled && payment === "card" && (
-          <p className="mt-3 text-center text-[11px] text-outline">
+          <p className="mt-3 text-center text-[14px] sm:text-[11px] text-ink-muted">
             Tienda en modo demostración · no se realiza ningún cobro real
           </p>
         )}
@@ -378,7 +378,7 @@ function SubmitButton({
 
 function StepDot({ children }: { children: React.ReactNode }) {
   return (
-    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-anil text-[13px] font-bold text-algodon">
+    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-anil text-[14px] sm:text-[13px] font-bold text-algodon">
       {children}
     </span>
   );

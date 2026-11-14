@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
-import { Search, X } from "lucide-react";
+import { Search, ShieldCheck, X } from "lucide-react";
 
 import { cn } from "@/lib/format";
 
@@ -26,6 +26,7 @@ const DEFAULTS: Record<string, string> = {
   textura: "all",
   orden: "popular",
   q: "",
+  rfid: "",
 };
 
 export function CatalogFilters({
@@ -45,6 +46,7 @@ export function CatalogFilters({
     textura: params.get("textura") ?? "all",
     orden: params.get("orden") ?? "popular",
     q: params.get("q") ?? "",
+    rfid: params.get("rfid") ?? "",
   };
 
   const [query, setQuery] = useState(current.q);
@@ -66,7 +68,7 @@ export function CatalogFilters({
   );
 
   const hasFilters =
-    current.textura !== "all" || current.q !== "";
+    current.textura !== "all" || current.q !== "" || current.rfid !== "";
 
   return (
     <div
@@ -120,19 +122,32 @@ export function CatalogFilters({
             onBlur={() => query.trim() !== current.q && setParam("q", query.trim())}
             placeholder="Buscar billeteras o tarjeteros"
             aria-label="Buscar en la colección"
-            className="w-full scroll-mt-32 rounded-full border border-outline-variant bg-surface-container py-2 pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-muted/70 focus:border-anil focus:outline-none"
+            className="w-full scroll-mt-32 rounded-full border border-outline-variant bg-surface-container py-2 pl-9 pr-3 text-[14px] sm:text-[13px] text-ink placeholder:text-ink-placeholder focus:border-anil focus:outline-none"
           />
         </form>
       </div>
 
       {/* Piel + orden. Sin filtro de tono: cada modelo tiene sus propios colores. */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-4 p-4">
+        <button
+          type="button"
+          onClick={() => setParam("rfid", current.rfid === "si" ? "" : "si")}
+          aria-pressed={current.rfid === "si"}
+          className={cn(
+            chip(current.rfid === "si"),
+            "inline-flex items-center gap-1.5",
+          )}
+        >
+          <ShieldCheck size={15} strokeWidth={1.9} aria-hidden />
+          Con bloqueo RFID
+        </button>
+
         <label className="flex items-center gap-2">
           <span className="eyebrow text-ink-muted">Piel</span>
           <select
             value={current.textura}
             onChange={(e) => setParam("textura", e.target.value)}
-            className="cursor-pointer rounded-sm border border-outline-variant bg-surface-container px-3 py-1.5 text-[13px] text-ink focus:border-anil focus:outline-none"
+            className="cursor-pointer rounded-sm border border-outline-variant bg-surface-container px-3 py-1.5 text-[14px] sm:text-[13px] text-ink focus:border-anil focus:outline-none"
           >
             {TEXTURES.map((t) => (
               <option key={t.code} value={t.code}>
@@ -150,11 +165,12 @@ export function CatalogFilters({
                 const next = new URLSearchParams(params.toString());
                 next.delete("textura");
                 next.delete("q");
+                next.delete("rfid");
                 const qs = next.toString();
                 router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
               })
             }
-            className="inline-flex items-center gap-1 text-[12px] font-semibold text-cafe hover:text-anil"
+            className="inline-flex items-center gap-1 text-[14px] sm:text-[12px] font-semibold text-cafe hover:text-anil"
           >
             <X size={13} strokeWidth={2} />
             Limpiar filtros
@@ -166,7 +182,7 @@ export function CatalogFilters({
           <select
             value={current.orden}
             onChange={(e) => setParam("orden", e.target.value)}
-            className="cursor-pointer rounded-sm border border-outline-variant bg-surface-container px-3 py-1.5 text-[13px] text-ink focus:border-anil focus:outline-none"
+            className="cursor-pointer rounded-sm border border-outline-variant bg-surface-container px-3 py-1.5 text-[14px] sm:text-[13px] text-ink focus:border-anil focus:outline-none"
           >
             {SORTS.map((s) => (
               <option key={s.code} value={s.code}>
@@ -182,7 +198,7 @@ export function CatalogFilters({
 
 function chip(active: boolean) {
   return cn(
-    "rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40",
+    "rounded-full border px-3.5 py-1.5 text-[14px] sm:text-[13px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40",
     active
       ? "border-anil bg-anil text-algodon"
       : "border-outline-variant bg-transparent text-ink-muted hover:border-anil hover:text-anil",

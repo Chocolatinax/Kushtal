@@ -130,7 +130,7 @@ export function MobileNav({ items }: { items: NavItem[] }) {
               )}
             </div>
 
-            <p className="mt-auto border-t border-outline-variant/60 px-6 py-5 text-[13px] leading-5 text-ink-muted">
+            <p className="mt-auto border-t border-outline-variant/60 px-6 py-5 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
               Billeteras de cuero que diseñas tú, hechas a mano en El Salvador.
             </p>
           </nav>

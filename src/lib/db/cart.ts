@@ -12,7 +12,9 @@ import {
   type Cart,
   type CartItem,
   type Configuration,
+  type GiftOption,
   type Product,
+  type ProductWithOptions,
 } from "@/lib/types";
 
 const CART_COOKIE = "kushtal_cart";
@@ -149,6 +151,7 @@ export async function getCart(): Promise<Cart> {
       created_at: row.created_at as string,
       product,
       details,
+      gift: full ? giftOptionFor(full) : null,
     });
   }
 
@@ -165,6 +168,24 @@ export async function getCart(): Promise<Cart> {
     total_cents: subtotal,
     item_count: items.reduce((n, i) => n + i.quantity, 0),
     free_shipping_threshold_cents: FREE_SHIPPING_THRESHOLD_CENTS,
+  };
+}
+
+/**
+ * La caja de regalo de un modelo: dentro del grupo "estuche", la opción con
+ * costo frente a la incluida. Se usa en la bolsa para marcarla sin volver al
+ * configurador.
+ */
+export function giftOptionFor(product: ProductWithOptions): GiftOption | null {
+  const group = product.option_groups.find((g) => g.code === "estuche");
+  const basic = group?.values.find((v) => v.active && v.price_delta_cents === 0);
+  const gift = group?.values.find((v) => v.active && v.code !== basic?.code);
+  if (!basic || !gift) return null;
+  return {
+    code: gift.code,
+    basic_code: basic.code,
+    label: gift.label,
+    price_delta_cents: gift.price_delta_cents,
   };
 }
 

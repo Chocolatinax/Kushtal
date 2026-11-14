@@ -26,7 +26,7 @@ export function InfoPage({
         <h1 className="mt-3 font-display text-[30px] leading-[38px] font-semibold text-piedra md:text-[40px] md:leading-[48px]">
           {title}
         </h1>
-        <p className="mt-4 text-[15px] leading-6 text-ink-muted">{intro}</p>
+        <p className="mt-4 text-base sm:text-[15px] leading-6 text-ink-muted">{intro}</p>
       </div>
 
       {sections && (

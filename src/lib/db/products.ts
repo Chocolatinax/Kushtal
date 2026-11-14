@@ -230,3 +230,22 @@ function normalizeProduct(row: unknown): ProductWithOptions {
     option_groups: groups as OptionGroup[],
   };
 }
+
+/**
+ * Lo que suma el bloqueo RFID (grupo "rfid", opción "si") en cada modelo.
+ * Las tarjetas que abren la versión con RFID muestran el precio de partida
+ * con el bloqueo ya sumado, igual que el configurador.
+ */
+export async function getRfidDeltas(slugs: string[]): Promise<Map<string, number>> {
+  const products = await Promise.all(
+    slugs.map((slug) => getProductWithOptions(slug).catch(() => null)),
+  );
+  const deltas = new Map<string, number>();
+  for (const product of products) {
+    const value = product?.option_groups
+      .find((g) => g.code === "rfid")
+      ?.values.find((v) => v.code === "si" && v.active);
+    if (product && value) deltas.set(product.slug, value.price_delta_cents);
+  }
+  return deltas;
+}

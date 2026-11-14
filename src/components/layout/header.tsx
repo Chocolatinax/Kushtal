@@ -66,7 +66,7 @@ export async function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="label-pill text-[11px] text-ink-muted transition-colors hover:text-anil"
+                  className="label-pill text-[14px] sm:text-[11px] text-ink-muted transition-colors hover:text-anil"
                 >
                   {item.label}
                 </Link>
@@ -75,7 +75,7 @@ export async function Header() {
           </nav>
 
           <div className="ml-auto flex items-center gap-4">
-            <span className="hidden text-[13px] text-ink-muted md:inline">
+            <span className="hidden text-[14px] sm:text-[13px] text-ink-muted md:inline">
               USD $
             </span>
 
@@ -94,7 +94,7 @@ export async function Header() {
             >
               <ShoppingBag size={19} strokeWidth={1.6} />
               {count > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cafe px-1 text-[10px] font-bold text-algodon">
+                <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-cafe px-1 text-[11px] font-bold text-algodon">
                   {count}
                 </span>
               )}

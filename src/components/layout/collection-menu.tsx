@@ -53,7 +53,7 @@ export function CollectionMenu({ item }: { item: NavItem }) {
         href={item.href}
         aria-expanded={!closed}
         className={cn(
-          "flex items-center gap-1 label-pill text-[11px] text-ink-muted transition-colors hover:text-anil",
+          "flex items-center gap-1 label-pill text-[14px] sm:text-[11px] text-ink-muted transition-colors hover:text-anil",
           !closed && "group-hover:text-anil group-focus-within:text-anil",
         )}
       >
@@ -110,7 +110,7 @@ export function CollectionMenu({ item }: { item: NavItem }) {
 
             <Link
               href={item.href}
-              className="inline-flex w-fit items-center gap-2 border-b border-piedra pb-1 text-[13px] font-semibold tracking-wider text-piedra uppercase transition-colors hover:border-anil hover:text-anil sm:col-span-3"
+              className="inline-flex w-fit items-center gap-2 border-b border-piedra pb-1 text-[14px] sm:text-[13px] font-semibold tracking-wider text-piedra uppercase transition-colors hover:border-anil hover:text-anil sm:col-span-3"
             >
               Ver toda la colección
               <ArrowRight size={15} strokeWidth={1.8} />

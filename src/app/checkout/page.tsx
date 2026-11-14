@@ -126,27 +126,27 @@ export default async function CheckoutPage() {
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-3">
-                        <p className="font-display text-[15px] leading-5 font-semibold text-piedra">
+                        <p className="font-display text-base sm:text-[15px] leading-5 font-semibold text-piedra">
                           {item.product.name}
                         </p>
-                        <p className="shrink-0 font-display text-[15px] font-semibold text-piedra tabular-nums">
+                        <p className="shrink-0 font-display text-base sm:text-[15px] font-semibold text-piedra tabular-nums">
                           {formatPrice(item.unit_price_cents * item.quantity)}
                         </p>
                       </div>
 
                       {specs && (
-                        <p className="mt-1 text-[12px] text-ink-muted">{specs}</p>
+                        <p className="mt-1 text-[14px] sm:text-[12px] text-ink-muted">{specs}</p>
                       )}
 
                       <div className="mt-2 flex items-center justify-between gap-3">
                         {engraving ? (
-                          <Badge tone="craft" className="text-[10px]">
+                          <Badge tone="craft" className="text-[14px] sm:text-[10px]">
                             Grabado: &ldquo;{engraving.value_label}&rdquo;
                           </Badge>
                         ) : (
                           <span />
                         )}
-                        <span className="shrink-0 text-[12px] text-ink-muted">
+                        <span className="shrink-0 text-[14px] sm:text-[12px] text-ink-muted">
                           Cant: {item.quantity}
                         </span>
                       </div>
@@ -175,19 +175,14 @@ export default async function CheckoutPage() {
                 <p className="font-display text-xl font-semibold text-piedra">
                   Total del pedido
                 </p>
-                <p className="mt-0.5 text-[12px] text-ink-muted">
+                <p className="mt-0.5 text-[14px] sm:text-[12px] text-ink-muted">
                   Precios en dólares, IVA y envío incluidos.
                 </p>
               </div>
-              <p className="font-display text-[26px] leading-8 font-semibold text-piedra tabular-nums">
+              <p className="whitespace-nowrap font-display text-[22px] leading-8 font-semibold text-piedra tabular-nums sm:text-[26px]">
                 <SummaryTotal />
               </p>
             </div>
-
-            <p className="mt-5 text-center text-[12px] leading-4 text-ink-muted">
-              Al confirmar tu pedido empezamos a cortar y coser tu pieza a
-              mano.
-            </p>
           </div>
 
           <div className="rounded-xl bg-surface-high/70 p-6">
@@ -201,7 +196,7 @@ export default async function CheckoutPage() {
                     <p className="text-[14px] font-semibold text-piedra">
                       {promise.title}
                     </p>
-                    <p className="mt-1 text-[12px] leading-4 text-ink-muted">
+                    <p className="mt-1 text-[14px] sm:text-[12px] leading-5 sm:leading-4 text-ink-muted">
                       {promise.body}
                     </p>
                   </div>

@@ -100,10 +100,10 @@ export function LeatherPalette() {
                 />
               </span>
               <span className="flex flex-col">
-                <span className="text-[13px] font-semibold tracking-wider text-anil uppercase">
+                <span className="text-[14px] sm:text-[13px] font-semibold tracking-wider text-anil uppercase">
                   {l.name}
                 </span>
-                <span className="text-[13px] leading-5 text-ink-muted">{l.note}</span>
+                <span className="text-[14px] sm:text-[13px] leading-5 text-ink-muted">{l.note}</span>
               </span>
             </button>
           );
@@ -120,7 +120,7 @@ export function LeatherPalette() {
             sizes="(max-width: 1024px) 100vw, 40vw"
             className="animate-[fade-in_300ms_ease-out] object-cover"
           />
-          <span className="absolute left-3 top-3 rounded border border-ceniza/80 bg-algodon/90 px-2.5 py-1 text-[9px] font-semibold tracking-wider text-anil uppercase backdrop-blur-sm">
+          <span className="absolute left-3 top-3 rounded border border-ceniza/80 bg-algodon/90 px-2.5 py-1 text-[14px] sm:text-[9px] font-semibold tracking-wider text-anil uppercase backdrop-blur-sm">
             {leather.model}
           </span>
         </div>
@@ -129,7 +129,7 @@ export function LeatherPalette() {
             <p className="font-display text-[18px] font-medium text-piedra">
               {leather.name}
             </p>
-            <p className="text-[13px] text-ink-muted">
+            <p className="text-[14px] sm:text-[13px] text-ink-muted">
               Disponible desde $50 en el configurador.
             </p>
           </div>

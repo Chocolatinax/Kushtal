@@ -61,10 +61,10 @@ export default function ContactPage() {
             <h2 className="mt-4 font-display text-[20px] font-semibold text-piedra">
               {channel.title}
             </h2>
-            <p className="mt-2 flex-1 text-[13px] leading-5 text-ink-muted">
+            <p className="mt-2 flex-1 text-[14px] sm:text-[13px] leading-5 text-ink-muted">
               {channel.body}
             </p>
-            <span className="mt-4 text-[13px] font-semibold text-anil">
+            <span className="mt-4 text-[14px] sm:text-[13px] font-semibold text-anil">
               {channel.cta}
             </span>
           </a>

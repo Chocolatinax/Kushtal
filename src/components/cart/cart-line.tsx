@@ -4,9 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { Check, Gift, Loader2, Trash2 } from "lucide-react";
 
-import { removeCartItem, updateCartItemQuantity } from "@/app/actions/cart";
+import {
+  removeCartItem,
+  setCartItemGift,
+  updateCartItemQuantity,
+} from "@/app/actions/cart";
 import { Badge } from "@/components/ui/badge";
 import { cn, formatPrice } from "@/lib/format";
 import type { CartItem } from "@/lib/types";
@@ -29,26 +33,37 @@ export function CartLine({ item }: { item: CartItem }) {
     });
   }
 
+  function toggleGift(gift: boolean) {
+    startTransition(async () => {
+      await setCartItemGift({ itemId: item.id, gift });
+      router.refresh();
+    });
+  }
+
+  const isGift = Boolean(item.gift && item.config.estuche === item.gift.code);
   const engraving = item.details.find((d) => d.group_code === "grabado");
-  const specs = item.details.filter((d) => d.group_code !== "grabado");
+  // El empaque se muestra como el botón de regalo, no en la lista.
+  const specs = item.details.filter(
+    (d) => d.group_code !== "grabado" && !(item.gift && d.group_code === "estuche"),
+  );
 
   return (
     <article
       className={cn(
-        "flex gap-5 border-b border-outline-variant/60 py-6 transition-opacity last:border-b-0",
+        "flex flex-col gap-4 border-b border-outline-variant/60 py-6 transition-opacity last:border-b-0 sm:flex-row sm:gap-5",
         pending && "opacity-50",
       )}
     >
       <Link
         href={`/personalizar/${item.product.slug}`}
-        className="relative aspect-4/5 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container sm:w-32"
+        className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-lg bg-surface-container sm:aspect-4/5 sm:w-32"
       >
         {item.product.hero_image && (
           <Image
             src={item.product.hero_image}
             alt={item.product.name}
             fill
-            sizes="128px"
+            sizes="(max-width: 640px) 100vw, 128px"
             className="object-cover"
           />
         )}
@@ -78,7 +93,7 @@ export function CartLine({ item }: { item: CartItem }) {
             {specs.map((d) => (
               <li
                 key={d.group_code}
-                className="flex items-center gap-1.5 text-[12px] text-ink-muted"
+                className="flex items-center gap-1.5 text-[14px] sm:text-[12px] text-ink-muted"
               >
                 {d.hex && (
                   <span
@@ -98,7 +113,43 @@ export function CartLine({ item }: { item: CartItem }) {
           </p>
         )}
 
-        <div className="mt-auto flex items-center gap-4 pt-4">
+        {/* Opción de regalo visible en la bolsa: en las pruebas no se veía
+            al final del configurador. */}
+        {item.gift && (
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isGift}
+            disabled={pending}
+            onClick={() => toggleGift(!isGift)}
+            className={cn(
+              "mt-3 flex w-fit items-start gap-2 rounded-lg border px-3 py-2 text-left text-[14px] leading-5 font-semibold transition-colors",
+              isGift
+                ? "border-cafe bg-cafe-container text-cafe"
+                : "border-dashed border-cafe/60 text-piedra hover:bg-cafe-container/50",
+            )}
+          >
+            {isGift ? (
+              <Check size={16} strokeWidth={2.5} className="mt-0.5 shrink-0 text-cafe" aria-hidden />
+            ) : (
+              <Gift size={16} strokeWidth={1.8} className="mt-0.5 shrink-0 text-cafe" aria-hidden />
+            )}
+            <span>
+              {isGift ? (
+                <>Para regalo: {item.gift.label}</>
+              ) : (
+                <>
+                  ¿Es un regalo? Añadir {item.gift.label.toLowerCase()}{" "}
+                  <span className="text-cafe">
+                    (+{formatPrice(item.gift.price_delta_cents)})
+                  </span>
+                </>
+              )}
+            </span>
+          </button>
+        )}
+
+        <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-4">
           <div className="flex items-center rounded-sm border border-outline-variant">
             <button
               type="button"
@@ -127,7 +178,7 @@ export function CartLine({ item }: { item: CartItem }) {
             </button>
           </div>
 
-          <p className="text-[12px] text-ink-muted">
+          <p className="text-[14px] sm:text-[12px] text-ink-muted">
             {formatPrice(item.unit_price_cents)} c/u
           </p>
 
@@ -135,7 +186,7 @@ export function CartLine({ item }: { item: CartItem }) {
             type="button"
             onClick={remove}
             disabled={pending}
-            className="ml-auto inline-flex items-center gap-1.5 text-[12px] font-semibold text-ink-muted transition-colors hover:text-danger-ink"
+            className="ml-auto inline-flex items-center gap-1.5 text-[14px] sm:text-[12px] font-semibold text-ink-muted transition-colors hover:text-danger-ink"
           >
             <Trash2 size={13} strokeWidth={1.8} />
             Quitar

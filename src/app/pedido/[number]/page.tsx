@@ -71,7 +71,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
           Gracias, {address.first_name}. Tu encargo está en marcha.
         </h1>
 
-        <p className="mt-4 text-[15px] leading-6 text-ink-muted">
+        <p className="mt-4 text-base sm:text-[15px] leading-6 text-ink-muted">
           {status.note} Te enviamos la confirmación a{" "}
           <strong className="text-piedra">{order.email}</strong> y te
           avisaremos cuando tu pieza salga del taller.
@@ -142,7 +142,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
                         {specs.map((d) => (
                           <div
                             key={d.group_code}
-                            className="flex items-center gap-2 text-[12px]"
+                            className="flex items-center gap-2 text-[14px] sm:text-[12px]"
                           >
                             <dt className="text-ink-muted">{d.group_label}:</dt>
                             <dd className="flex items-center gap-1.5 font-medium text-piedra">
@@ -165,7 +165,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
                           Grabado: &ldquo;{engraving.value_label}&rdquo;
                         </Badge>
                       )}
-                      <span className="text-[12px] text-ink-muted">
+                      <span className="text-[14px] sm:text-[12px] text-ink-muted">
                         Cantidad: {item.quantity}
                       </span>
                     </div>
@@ -215,7 +215,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
               Destino
             </h2>
 
-            <address className="mt-3 text-[13px] leading-5 not-italic text-ink-muted">
+            <address className="mt-3 text-[14px] sm:text-[13px] leading-5 not-italic text-ink-muted">
               <strong className="block text-piedra">
                 {address.first_name} {address.last_name}
               </strong>
@@ -227,7 +227,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
               {address.phone}
             </address>
 
-            <p className="mt-4 flex items-center gap-2 border-t border-outline-variant/60 pt-4 text-[12px] text-ink-muted">
+            <p className="mt-4 flex items-center gap-2 border-t border-outline-variant/60 pt-4 text-[14px] sm:text-[12px] text-ink-muted">
               <Mail size={13} strokeWidth={1.7} />
               {order.email}
             </p>
@@ -264,7 +264,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
               <p className="mt-4 font-display text-[17px] leading-6 font-semibold text-piedra">
                 {step.title}
               </p>
-              <p className="mt-1.5 text-[12px] leading-4 text-ink-muted">
+              <p className="mt-1.5 text-[14px] sm:text-[12px] leading-5 sm:leading-4 text-ink-muted">
                 {step.body}
               </p>
             </li>
