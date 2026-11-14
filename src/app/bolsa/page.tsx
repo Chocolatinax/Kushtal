@@ -181,7 +181,7 @@ export default async function CartPage() {
               </p>
             </div>
 
-            <ButtonLink href="/checkout" size="lg" className="mt-6 w-full">
+            <ButtonLink data-whatsapp-avoid href="/checkout" size="lg" className="mt-6 w-full">
               Continuar como invitado
               <ArrowRight size={15} strokeWidth={2} />
             </ButtonLink>

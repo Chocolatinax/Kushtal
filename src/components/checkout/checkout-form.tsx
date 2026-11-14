@@ -19,15 +19,15 @@ import { SHIPPING_OPTIONS, SV_DEPARTMENTS } from "@/lib/types";
 import { useCheckoutShipping } from "./checkout-shipping";
 
 /**
- * Solo tarjeta (cobrada en la pasarela de Stripe) y PayPal (se coordina
- * por correo).
+ * Solo tarjeta (pago simulado, sin pasarela) y PayPal (se coordina por
+ * correo).
  */
 const PAYMENT_TABS = [
   {
     code: "card",
     label: "Tarjeta",
     icon: CreditCard,
-    note: "Al confirmar te llevamos a la pasarela cifrada para ingresar tu tarjeta. Sus datos nunca pasan por nuestros servidores.",
+    note: "Al confirmar, tu pedido queda registrado como pagado. No te pedimos los datos de tu tarjeta.",
   },
   {
     code: "paypal",
@@ -39,11 +39,9 @@ const PAYMENT_TABS = [
 
 export function CheckoutForm({
   subtotalCents,
-  stripeEnabled,
   defaults,
 }: {
   subtotalCents: number;
-  stripeEnabled: boolean;
   defaults: Partial<Record<string, string>>;
 }) {
   const [state, formAction] = useActionState<CheckoutState, FormData>(
@@ -207,7 +205,6 @@ export function CheckoutForm({
               type="checkbox"
               name="save_info"
               value="true"
-              defaultChecked
               className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-xs border-[1.5px] border-piedra/35 accent-torogoz"
             />
             Guardar estos datos para mis próximos pedidos.
@@ -310,7 +307,7 @@ export function CheckoutForm({
         </div>
 
         {/* Un solo bloque limpio para el cliente: sin campos de tarjeta
-            (se llenan en la pasarela) ni detalles técnicos. */}
+            ni detalles técnicos. */}
         <div className="mt-4 flex items-start gap-3 rounded-lg bg-surface-container p-4">
           <Lock
             size={15}
@@ -336,8 +333,8 @@ export function CheckoutForm({
           </div>
         </div>
 
-        {/* Aviso discreto mientras no haya pasarela real configurada. */}
-        {!stripeEnabled && payment === "card" && (
+        {/* Aviso discreto: el pago con tarjeta es simulado. */}
+        {payment === "card" && (
           <p className="mt-3 text-center text-[14px] sm:text-[11px] text-ink-muted">
             Tienda en modo demostración · no se realiza ningún cobro real
           </p>
@@ -360,7 +357,7 @@ function SubmitButton({
   const total = subtotalCents + shippingCostCents(subtotalCents, shipping);
 
   return (
-    <Button type="submit" size="lg" disabled={pending} className="w-full">
+    <Button data-whatsapp-avoid type="submit" size="lg" disabled={pending} className="w-full">
       {pending ? (
         <>
           <Loader2 size={16} className="animate-spin" />

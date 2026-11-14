@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/social-icons";
 import { routePath, SILOS } from "@/lib/catalog-routes";
 import { CONTACT_EMAIL, SOCIAL_LINKS, WHATSAPP_NUMBER } from "@/lib/site";
+import { NewsletterSignup } from "./newsletter-signup";
 
 const SOCIALS = [
   { href: SOCIAL_LINKS.instagram, label: "Instagram", icon: InstagramIcon },
@@ -37,7 +38,9 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-outline-variant/60 bg-surface-high/50">
+    <>
+    <NewsletterSignup />
+    <footer className="border-t border-outline-variant/60 bg-surface-high/50">
       <div className="canvas grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4">
         <div className="lg:pr-8">
           <p className="font-display text-xl font-semibold tracking-[0.12em] text-piedra">
@@ -120,7 +123,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-outline-variant/60">
-        <div className="canvas flex flex-col gap-3 py-5 text-[14px] sm:text-[11px] text-ink-muted sm:flex-row sm:items-center">
+        <div className="canvas flex flex-col gap-3 pt-5 pb-24 text-[14px] sm:text-[11px] text-ink-muted sm:flex-row sm:items-center lg:pb-5">
           <p>
             © {new Date().getFullYear()} Kushtal. Todos los derechos
             reservados.
@@ -140,5 +143,6 @@ export function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

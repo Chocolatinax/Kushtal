@@ -1,6 +1,5 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -8,11 +7,10 @@ import { z } from "zod";
 import { getCart } from "@/lib/db/cart";
 import { rememberOrder, saveAddress } from "@/lib/demo-session";
 import { generateOrderNumber } from "@/lib/format";
-import { resolveShipping, shippingCostCents } from "@/lib/pricing";
+import { shippingCostCents } from "@/lib/pricing";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Json } from "@/lib/supabase/database.types";
 import { getCurrentUser } from "@/lib/supabase/server";
-import { getStripe } from "@/lib/stripe";
 import { SV_DEPARTMENTS } from "@/lib/types";
 
 export interface CheckoutState {
@@ -110,10 +108,9 @@ async function submitOrder(formData: FormData): Promise<CheckoutState> {
     country: input.country,
   };
 
-  // PayPal se cobra fuera de la web: el pedido queda pendiente y se le
-  // escribe al cliente. La tarjeta va a Stripe.
+  // Pago simulado: con tarjeta el pedido queda pagado al confirmar. PayPal se
+  // cobra fuera de la web: el pedido queda pendiente y se le escribe al cliente.
   const paysOffline = input.payment_method === "paypal";
-  const stripe = paysOffline ? null : getStripe();
 
   const { data: order, error: orderError } = await supabase
     .from("orders")
@@ -121,8 +118,7 @@ async function submitOrder(formData: FormData): Promise<CheckoutState> {
       order_number: generateOrderNumber(),
       user_id: user?.id ?? null,
       email: input.email,
-      // Sin Stripe el pedido queda pagado en modo simulado.
-      status: stripe || paysOffline ? "pending" : "paid",
+      status: paysOffline ? "pending" : "paid",
       subtotal_cents: subtotal,
       shipping_cents: shipping,
       total_cents: total,
@@ -163,109 +159,10 @@ async function submitOrder(formData: FormData): Promise<CheckoutState> {
   }
   await rememberOrder(order.order_number, order.access_token);
 
-  const origin = await getOrigin();
-  const confirmUrl = `${origin}/pedido/${order.order_number}?t=${order.access_token}`;
-
-  /* ----------------------------- Con Stripe ----------------------------- */
-  if (stripe) {
-    const lineItems = cart.items.map((item) => ({
-      quantity: item.quantity,
-      price_data: {
-        currency: "usd",
-        unit_amount: item.unit_price_cents,
-        product_data: {
-          name: item.product.name,
-          description:
-            item.details.map((d) => d.value_label).join(" · ") || undefined,
-          // Stripe necesita URLs absolutas; las fotos locales vienen como "/…".
-          images: item.product.hero_image
-            ? [new URL(item.product.hero_image, origin).toString()]
-            : undefined,
-        },
-      },
-    }));
-
-    if (shipping > 0) {
-      const option = resolveShipping(input.shipping_method);
-      lineItems.push({
-        quantity: 1,
-        price_data: {
-          currency: "usd",
-          unit_amount: shipping,
-          product_data: {
-            name: option.label,
-            description: option.description,
-            images: undefined,
-          },
-        },
-      });
-    }
-
-    try {
-      const session = await stripe.checkout.sessions.create({
-        mode: "payment",
-        customer_email: input.email,
-        line_items: lineItems,
-        success_url: confirmUrl,
-        cancel_url: `${origin}/checkout?cancelado=1`,
-        metadata: {
-          order_id: order.id as string,
-          order_number: order.order_number as string,
-        },
-      });
-
-      await supabase
-        .from("orders")
-        .update({ stripe_session_id: session.id })
-        .eq("id", order.id);
-
-      if (!session.url) {
-        return { error: "Stripe no devolvió una URL de pago." };
-      }
-
-      redirect(session.url);
-    } catch (err) {
-      // redirect() tira a propósito; no es un fallo.
-      if (isRedirectError(err)) throw err;
-
-      await supabase.from("orders").update({ status: "cancelled" }).eq("id", order.id);
-      return {
-        error:
-          "No se pudo abrir la pasarela de pago. Revisa tus claves de Stripe.",
-      };
-    }
-  }
-
-  /* ------------------- Modo simulado o pago por fuera ------------------- */
   await supabase.from("cart_items").delete().eq("cart_id", cart.id);
 
   revalidatePath("/bolsa");
   revalidatePath("/", "layout");
 
   redirect(`/pedido/${order.order_number}?t=${order.access_token}`);
-}
-
-/* ------------------------------------------------------------------ */
-
-function isRedirectError(err: unknown): boolean {
-  return (
-    typeof err === "object" &&
-    err !== null &&
-    "digest" in err &&
-    typeof (err as { digest: unknown }).digest === "string" &&
-    (err as { digest: string }).digest.startsWith("NEXT_REDIRECT")
-  );
-}
-
-async function getOrigin(): Promise<string> {
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
-  }
-
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-  const proto =
-    h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-
-  return `${proto}://${host}`;
 }

@@ -22,7 +22,7 @@ export async function getOrderByNumber(
     .from("orders")
     .select(
       `id, order_number, user_id, email, status, subtotal_cents, shipping_cents,
-       total_cents, shipping_method, shipping_address, stripe_session_id,
+       total_cents, shipping_method, shipping_address,
        access_token, created_at`,
     )
     .eq("order_number", orderNumber)
@@ -65,7 +65,7 @@ export async function getMyOrders(): Promise<Order[]> {
     .from("orders")
     .select(
       `id, order_number, user_id, email, status, subtotal_cents, shipping_cents,
-       total_cents, shipping_method, shipping_address, stripe_session_id,
+       total_cents, shipping_method, shipping_address,
        access_token, created_at,
        order_items (
          id, order_id, product_name, product_slug, product_image, config,

@@ -13,7 +13,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { getCart } from "@/lib/db/cart";
 import { formatPrice, formatPriceUSD } from "@/lib/format";
-import { isStripeEnabled } from "@/lib/stripe";
 import { getSavedAddress } from "@/lib/demo-session";
 
 export const metadata: Metadata = {
@@ -87,7 +86,6 @@ export default async function CheckoutPage() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-10">
         <CheckoutForm
           subtotalCents={cart.subtotal_cents}
-          stripeEnabled={isStripeEnabled()}
           defaults={defaults}
         />
 

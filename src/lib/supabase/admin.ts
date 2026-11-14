@@ -8,8 +8,7 @@ import type { Database } from "./database.types";
  * Cliente con service role: omite RLS.
  *
  * Se usa solo para lo que el servidor debe poder hacer en nombre del usuario:
- * mover el carrito de un invitado, escribir pedidos, marcar un pago como
- * confirmado desde el webhook de Stripe.
+ * mover el carrito de un invitado y escribir pedidos.
  *
  * Nunca lo importes desde un componente del navegador. El "server-only" de
  * arriba hace que el build falle si alguien lo intenta.

@@ -46,3 +46,12 @@ export function TikTokIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function WhatsAppIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M3.5 20.5l1.3-4.1A8.5 8.5 0 1 1 8 19.6z" />
+      <path d="M9 8.6c0-.4.3-.8.7-.8h.6c.3 0 .5.2.6.4l.6 1.5c.1.3 0 .5-.2.7l-.5.5a6 6 0 0 0 2.4 2.4l.5-.5c.2-.2.5-.3.7-.2l1.5.6c.3.1.4.3.4.6v.6c0 .4-.4.7-.8.7A6.1 6.1 0 0 1 9 8.6z" />
+    </svg>
+  );
+}

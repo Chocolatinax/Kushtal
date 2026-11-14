@@ -39,8 +39,8 @@ export default function PrivacyPage() {
           title: "Pagos",
           body: (
             <p>
-              Los pagos con tarjeta se procesan en Stripe. Los datos de tu
-              tarjeta nunca pasan por nuestros servidores.
+              En esta tienda de demostración el pago con tarjeta es simulado:
+              no te pedimos ni guardamos los datos de tu tarjeta.
             </p>
           ),
         },

@@ -1,7 +1,7 @@
 # Kushtal — Atelier de Marroquinería
 
 E-commerce de billeteras y tarjeteros personalizables. Next.js 16 (App Router)
-+ TypeScript + Tailwind v4 + Supabase + Stripe.
++ TypeScript + Tailwind v4 + Supabase.
 
 ---
 
@@ -64,30 +64,12 @@ Abrí `http://localhost:3000`.
 
 ---
 
-## Stripe (opcional)
+## Pago (simulado)
 
-**El checkout funciona sin Stripe.** Sin claves, el pedido se registra y se
-marca como pagado en modo simulado, y ves la confirmación completa. Eso alcanza
-para demostrar el flujo entero.
-
-Para cobrar de verdad en modo prueba, agregá a `.env.local`:
-
-```bash
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-```
-
-Y en otra terminal:
-
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-```
-
-Tarjeta de prueba: `4242 4242 4242 4242`, cualquier fecha futura, CVC `123`.
-
-> El pedido pasa a `paid` **solo** desde el webhook firmado, nunca desde el
-> `success_url`. Si confiaras en la URL de retorno, cualquiera podría marcar un
-> pedido como pagado abriéndola a mano.
+El pago con tarjeta es **simulado**: no hay pasarela ni se piden datos de
+tarjeta. Al confirmar, el pedido se registra como pagado y lleva directo a la
+confirmación. Con PayPal el pedido queda pendiente y se coordina por correo.
+No hace falta ninguna variable de entorno para el pago.
 
 ---
 
@@ -127,7 +109,6 @@ src/
     cuenta/                    Mis encargos (protegida)
     ingresar/                  Login con Google
     auth/callback/             Vuelta del OAuth + fusión del carrito de invitado
-    api/stripe/webhook/        Confirmación de pago firmada
     actions/                   Server actions: carrito, checkout, auth
   components/
     configurator/              Lienzo de vista previa y grupos de opciones
@@ -185,5 +166,3 @@ npx tsc --noEmit  # typecheck
 2. Pegá las mismas variables de `.env.local` en Vercel, con
    `NEXT_PUBLIC_SITE_URL` apuntando a tu dominio.
 3. En Supabase agregá ese dominio a las Redirect URLs.
-4. En Stripe, creá el webhook apuntando a
-   `https://tu-dominio.com/api/stripe/webhook` y pegá su signing secret.

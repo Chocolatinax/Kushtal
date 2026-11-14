@@ -323,6 +323,7 @@ export function Configurator({
           )}
 
           <Button
+            data-whatsapp-avoid
             onClick={handleAdd}
             disabled={pending}
             size="lg"
