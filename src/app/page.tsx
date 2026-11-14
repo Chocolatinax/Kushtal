@@ -126,8 +126,8 @@ export default async function HomePage() {
         <div className="canvas relative z-10 flex flex-col items-center py-16 text-center lg:py-24">
           <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-algodon/20 bg-algodon/15 px-4 py-1.5 backdrop-blur-md">
             <span className="h-1.5 w-1.5 rounded-full bg-cafe-container" />
-            <span className="text-[14px] sm:text-[11px] font-semibold tracking-[0.25em] text-algodon uppercase">
-              Kushtal Atelier · Cuero de autor
+            <span className="whitespace-nowrap text-[14px] font-semibold tracking-[0.2em] text-algodon uppercase sm:text-[11px] sm:tracking-[0.25em]">
+              Kushtal Atelier<span className="hidden sm:inline"> · Cuero de autor</span>
             </span>
           </span>
 
