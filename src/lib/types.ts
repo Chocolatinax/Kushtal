@@ -193,8 +193,6 @@ export interface ShippingOption {
   description: string;
   price_cents: number;
   badge: string;
-  /** Tiempo total estimado, corto, para la ficha y la bolsa. */
-  eta: string;
 }
 
 export const SHIPPING_OPTIONS: ShippingOption[] = [
@@ -204,7 +202,6 @@ export const SHIPPING_OPTIONS: ShippingOption[] = [
     description: "Confección a mano y entrega a domicilio en 4 a 6 días hábiles.",
     price_cents: 400,
     badge: "Gratis desde $75",
-    eta: "Llega en 4 a 6 días hábiles",
   },
   {
     code: "express",
@@ -212,7 +209,6 @@ export const SHIPPING_OPTIONS: ShippingOption[] = [
     description: "Tu pieza pasa primero al taller y llega en 3 días hábiles.",
     price_cents: 900,
     badge: "Más rápido",
-    eta: "Prioridad en el taller: llega en 3 días hábiles",
   },
 ];
 

@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 
 import { addToCart } from "@/app/actions/cart";
-import { ShippingEstimate } from "@/components/cart/shipping-estimate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -41,7 +40,6 @@ export function Configurator({
   images,
   preset = {},
   locked = [],
-  cartSubtotalCents = 0,
   rfidHref,
 }: {
   product: ProductWithOptions;
@@ -50,8 +48,6 @@ export function Configurator({
   preset?: Configuration;
   /** Accesorios incluidos de fábrica que no se pueden quitar (p. ej. "rfid"). */
   locked?: string[];
-  /** Lo que ya hay en la bolsa, para el aviso de envío gratis. */
-  cartSubtotalCents?: number;
   /** Si el modelo existe con bloqueo RFID y no se abrió así: enlace a esa versión. */
   rfidHref?: string;
 }) {
@@ -358,12 +354,6 @@ export function Configurator({
               Ir a la bolsa de compra
             </Link>
           )}
-
-          <ShippingEstimate
-            subtotalCents={cartSubtotalCents + unitPrice * quantity}
-            context="product"
-            className="mt-5"
-          />
         </div>
       </div>
     </div>
